@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kavrith</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">K</div>
+          <div class="brand-copy">
+            <h1>Kavrith</h1>
+          </div>
+        </div>
+      </header>
+
+      <section id="connection-card" class="connection-card" aria-live="polite">
+        <div class="connection-heading">
+          <span id="connection-dot" class="status-dot" aria-hidden="true"></span>
+          <strong id="connection-title">Checking local host…</strong>
+        </div>
+        <p id="connection-detail">Verifying the Kavrith local host.</p>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <strong>Default access</strong>
+          <span>New chats</span>
+        </div>
+
+        <div class="mode-list">
+          <label class="mode-option">
+            <input id="mode-approval" type="radio" name="access-mode" value="approval" />
+            <span class="mode-copy">
+              <strong>Ask before changes</strong>
+              <small>Reads run automatically. Edits and commands require approval.</small>
+            </span>
+          </label>
+
+          <label class="mode-option">
+            <input id="mode-full" type="radio" name="access-mode" value="full" />
+            <span class="mode-copy">
+              <strong>Full access</strong>
+              <small>Allows reads, edits, and commands without confirmation.</small>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <footer>
+        <span id="version"></span>
+      </footer>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

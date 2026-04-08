@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "outDir": "dist-test",
+    "rootDir": ".",
+    "skipLibCheck": true
+  },
+  "include": [
+    "lib/access-policy.ts",
+    "lib/async-mutation-queue.ts",
+    "lib/background-routing.ts",
+    "lib/messages.ts",
+    "lib/directive-lifecycle.ts",
+    "lib/conversation-session.ts",
+    "lib/chatgpt-context.ts",
+    "lib/chatgpt-exec.ts",
+    "lib/chatgpt-git.ts",
+    "lib/chatgpt-read.ts",
+    "lib/chatgpt-run.ts",
+    "lib/chatgpt-patch.ts",
+    "lib/chatgpt-code-block.ts",
+    "lib/chatgpt-directive-error.ts",
+    "lib/composer-delivery.ts",
+    "lib/exec-policy.ts",
+    "lib/result-outbox.ts",
+    "lib/user-gesture.ts"
+  ]
+}

@@ -1,0 +1,225 @@
+:root {
+  color-scheme: light dark;
+  font-family:
+    Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #18181b;
+  background: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+}
+
+main {
+  width: 360px;
+  padding: 16px;
+}
+
+.app-header {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e4e4e7;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  place-items: center;
+  border-radius: 10px;
+  background: #18181b;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.brand-copy h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.brand-copy p {
+  margin: 2px 0 0;
+  color: #71717a;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.connection-card {
+  margin-top: 13px;
+  padding: 11px;
+  border: 1px solid #e4e4e7;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.connection-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 999px;
+  background: #a1a1aa;
+}
+
+.status-dot[data-state="connected"] {
+  background: #16a34a;
+}
+
+.status-dot[data-state="error"] {
+  background: #dc2626;
+}
+
+.connection-card p {
+  margin: 5px 0 0 14px;
+  color: #71717a;
+  font-size: 10px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.section {
+  padding-top: 15px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.section-heading strong {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.section-heading span {
+  color: #a1a1aa;
+  font-size: 9px;
+}
+
+.mode-list {
+  display: grid;
+  gap: 7px;
+}
+
+.mode-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid #e4e4e7;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.mode-option:hover {
+  background: #f4f4f5;
+}
+
+.mode-option:has(input:checked) {
+  border-color: #71717a;
+  background: #fafafa;
+}
+
+.mode-option:focus-within {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}
+
+.mode-option input {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  margin: 1px 0 0;
+}
+
+.mode-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.mode-copy strong {
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.mode-copy small {
+  color: #71717a;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #e4e4e7;
+  color: #a1a1aa;
+  font-size: 9px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root,
+  body {
+    color: #f4f4f5;
+    background: #18181b;
+  }
+
+  .app-header,
+  footer {
+    border-color: #3f3f46;
+  }
+
+  .brand-mark {
+    background: #f4f4f5;
+    color: #18181b;
+  }
+
+  .brand-copy p,
+  .connection-card p,
+  .mode-copy small {
+    color: #a1a1aa;
+  }
+
+  .connection-card {
+    border-color: #3f3f46;
+    background: #202023;
+  }
+
+  .mode-option {
+    border-color: #3f3f46;
+  }
+
+  .mode-option:hover,
+  .mode-option:has(input:checked) {
+    background: #27272a;
+  }
+
+  .mode-option:has(input:checked) {
+    border-color: #a1a1aa;
+  }
+}

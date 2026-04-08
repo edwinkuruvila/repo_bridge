@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.output/
+.wxt/
+.corepack/
+.local-bin/
+.pnpm-store/
+*.log
+.DS_Store

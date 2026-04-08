@@ -1,0 +1,27 @@
+#!/bin/sh
+set -eu
+
+ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+INSTALL_DIR="$HOME/Library/Application Support/Kavrith/host"
+HOST_PATH="$INSTALL_DIR/run-host.sh"
+
+if [ ! -f "$ROOT_DIR/apps/host/dist/index.js" ]; then
+  echo "Host is not built. Run: pnpm --filter @kavrith/host build" >&2
+  exit 1
+fi
+if [ ! -f "$ROOT_DIR/packages/protocol/dist/index.js" ]; then
+  echo "Protocol is not built. Run: pnpm --filter @kavrith/protocol build" >&2
+  exit 1
+fi
+
+mkdir -p "$INSTALL_DIR"
+rm -rf "$INSTALL_DIR/dist" "$INSTALL_DIR/node_modules/@kavrith/protocol"
+cp -R "$ROOT_DIR/apps/host/dist" "$INSTALL_DIR/dist"
+mkdir -p "$INSTALL_DIR/node_modules/@kavrith/protocol"
+cp -R "$ROOT_DIR/packages/protocol/dist" "$INSTALL_DIR/node_modules/@kavrith/protocol/dist"
+cp "$ROOT_DIR/packages/protocol/package.json" "$INSTALL_DIR/node_modules/@kavrith/protocol/package.json"
+cp "$ROOT_DIR/apps/host/package.json" "$INSTALL_DIR/package.json"
+cp "$ROOT_DIR/apps/host/run-host.sh" "$HOST_PATH"
+chmod +x "$HOST_PATH"
+
+printf '%s\n' "$HOST_PATH"

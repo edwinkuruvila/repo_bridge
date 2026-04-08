@@ -1,0 +1,23 @@
+{
+  "name": "@kavrith/extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "wxt build -b firefox",
+    "typecheck": "wxt prepare && tsc --noEmit",
+    "test": "rm -rf dist-test && tsc -p tsconfig.test.json && node --test test/*.test.mjs; status=$?; rm -rf dist-test; exit $status",
+    "dev:firefox": "wxt -b firefox",
+    "build:firefox": "wxt build -b firefox",
+    "build:chrome": "wxt build -b chrome",
+    "build:all": "pnpm build:firefox && pnpm build:chrome",
+    "dev:chrome": "wxt -b chrome"
+  },
+  "dependencies": {
+    "@kavrith/protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "wxt": "^0.20.7"
+  }
+}

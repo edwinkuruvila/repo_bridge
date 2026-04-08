@@ -1,0 +1,25 @@
+{
+  "name": "kavrith",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.14.0",
+  "scripts": {
+    "build": "pnpm --filter @kavrith/protocol build && pnpm --filter @kavrith/host build && pnpm --filter @kavrith/extension build",
+    "typecheck": "pnpm --filter @kavrith/protocol build && pnpm --filter @kavrith/host typecheck && pnpm --filter @kavrith/extension typecheck",
+    "test": "pnpm --filter @kavrith/host test && pnpm --filter @kavrith/extension test",
+    "dev": "pnpm --filter @kavrith/extension dev:firefox",
+    "install:host:firefox": "pnpm --filter @kavrith/protocol build && pnpm --filter @kavrith/host build && ./scripts/install-firefox-host.sh",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "build:firefox": "pnpm --filter @kavrith/protocol build && pnpm --filter @kavrith/host build && pnpm --filter @kavrith/extension build:firefox",
+    "build:chrome": "pnpm --filter @kavrith/protocol build && pnpm --filter @kavrith/host build && pnpm --filter @kavrith/extension build:chrome",
+    "build:browsers": "pnpm --filter @kavrith/protocol build && pnpm --filter @kavrith/host build && pnpm --filter @kavrith/extension build:all",
+    "dev:chrome": "pnpm --filter @kavrith/extension dev:chrome",
+    "install:host:chrome": "pnpm --filter @kavrith/protocol build && pnpm --filter @kavrith/host build && ./scripts/install-chrome-host.sh"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.7"
+  }
+}
