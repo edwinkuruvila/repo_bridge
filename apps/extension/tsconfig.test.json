@@ -16,6 +16,7 @@
     "lib/background-routing.ts",
     "lib/messages.ts",
     "lib/directive-lifecycle.ts",
+    "lib/directive-stability.ts",
     "lib/conversation-session.ts",
     "lib/chatgpt-context.ts",
     "lib/chatgpt-exec.ts",

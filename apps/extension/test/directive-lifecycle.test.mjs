@@ -19,6 +19,31 @@ test("directive occurrence ids distinguish repeated directives", () => {
   );
 });
 
+test("streamed text keeps one directive occurrence id", () => {
+  assert.equal(
+    directiveOccurrenceId(3, 0, "run", "# kavrith:run\necho par"),
+    directiveOccurrenceId(3, 0, "run", "# kavrith:run\necho partial complete"),
+  );
+});
+
+test("streamed startup directives keep one occurrence until generation completes", () => {
+  const partial = directiveOccurrenceId(5, 0, "invalid-run", "# kavrith:run");
+  const complete = directiveOccurrenceId(
+    5,
+    0,
+    "run",
+    "# kavrith:run\necho complete",
+  );
+  assert.equal(partial, complete);
+});
+
+test("streamed parse-state changes keep one directive occurrence id", () => {
+  assert.equal(
+    directiveOccurrenceId(3, 0, "invalid-run", "# kavrith:run"),
+    directiveOccurrenceId(3, 0, "run", "# kavrith:run\necho complete"),
+  );
+});
+
 test("directive hashes are deterministic", () => {
   assert.equal(hashDirectiveText("abc"), hashDirectiveText("abc"));
   assert.notEqual(hashDirectiveText("abc"), hashDirectiveText("abd"));
