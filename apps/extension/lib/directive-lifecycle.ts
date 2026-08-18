@@ -31,7 +31,9 @@ export function directiveOccurrenceId(
   type: string,
   text: string,
 ): string {
-  return `${assistantTurnIdentity}:${codeIndex}:${type}:${hashDirectiveText(text)}`;
+  void type;
+  void text;
+  return `${assistantTurnIdentity}:${codeIndex}`;
 }
 
 function lifecycleRecord(

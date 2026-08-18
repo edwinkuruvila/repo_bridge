@@ -25,6 +25,17 @@ export default defineContentScript({
     };
     void syncSession();
     let rescanTimer: number | undefined;
+    const assistantIsGenerating = (): boolean => {
+      const selectors = [
+        "button[data-testid='stop-button']",
+        "button[aria-label='Stop generating']",
+        "button[aria-label='Stop']",
+      ];
+      return selectors.some((selector) => {
+        const button = document.querySelector<HTMLElement>(selector);
+        return Boolean(button && button.getClientRects().length > 0);
+      });
+    };
     const pendingAssistantMessages = new Set<HTMLElement>();
 
     new MutationObserver((records) => {
@@ -67,8 +78,12 @@ export default defineContentScript({
         window.clearTimeout(rescanTimer);
       }
 
-      rescanTimer = window.setTimeout(() => {
+      rescanTimer = window.setTimeout(function scanWhenStable() {
         rescanTimer = undefined;
+        if (assistantIsGenerating()) {
+          rescanTimer = window.setTimeout(scanWhenStable, 1_000);
+          return;
+        }
         void (async () => {
           await syncSession();
           for (const message of pendingAssistantMessages) {
@@ -76,7 +91,7 @@ export default defineContentScript({
           }
           pendingAssistantMessages.clear();
         })();
-      }, 300);
+      }, 1_200);
     }).observe(document.documentElement, {
       childList: true,
       characterData: true,

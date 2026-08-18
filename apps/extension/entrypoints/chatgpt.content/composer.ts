@@ -1,4 +1,4 @@
-import { composerRollbackDecision } from "../../lib/composer-delivery";
+import { composerRollbackDecision, firstUsableCandidate } from "../../lib/composer-delivery";
 
 const COMPOSER_SELECTORS = [
   "#prompt-textarea[contenteditable='true']",
@@ -127,8 +127,11 @@ export async function sendToChatGPT(
     }
 
     composer = currentComposer;
-    const send = document.querySelector<HTMLButtonElement>(selector);
-    if (send && !send.disabled && send.getClientRects().length > 0) {
+    const send = firstUsableCandidate(
+      document.querySelectorAll<HTMLButtonElement>(selector),
+      (button) => !button.disabled && button.getClientRects().length > 0,
+    );
+    if (send) {
       send.click();
       return { ok: true };
     }
