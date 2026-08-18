@@ -80,13 +80,15 @@ Then:
 The host is installed at:
 
 ```text
-~/Library/Application Support/Kavrith/host
+macOS: ~/Library/Application Support/Kavrith/host
+Linux: $XDG_DATA_HOME/kavrith/host (default: ~/.local/share/kavrith/host)
 ```
 
 Firefox reads its Native Messaging manifest from:
 
 ```text
-~/Library/Application Support/Mozilla/NativeMessagingHosts/com.kavrith.host.json
+macOS: ~/Library/Application Support/Mozilla/NativeMessagingHosts/com.kavrith.host.json
+Linux: ~/.mozilla/native-messaging-hosts/com.kavrith.host.json
 ```
 
 ## Chrome
@@ -118,7 +120,8 @@ Then:
 Chrome reads its Native Messaging manifest from:
 
 ```text
-~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.kavrith.host.json
+macOS: ~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.kavrith.host.json
+Linux: $XDG_CONFIG_HOME/google-chrome/NativeMessagingHosts/com.kavrith.host.json (default: ~/.config/google-chrome/NativeMessagingHosts/com.kavrith.host.json)
 ```
 
 The installer restricts the host to the supplied extension ID through `allowed_origins`.
