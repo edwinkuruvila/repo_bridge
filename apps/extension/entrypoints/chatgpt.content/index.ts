@@ -12,19 +12,6 @@ export default defineContentScript({
   runAt: "document_idle",
   main() {
     let activeSessionId: string | undefined;
-    const syncSession = async (): Promise<void> => {
-      const sessionId = await syncKavrithSessionForCurrentPage();
-      if (activeSessionId !== sessionId) {
-        activeSessionId = sessionId;
-        primeExistingDirectives();
-        await restoreQueuedResults();
-      }
-      // The ChatGPT composer can mount after document_idle. Retry rendering on
-      // later DOM mutations even when the logical Kavrith session is unchanged.
-      ensureChatInitializer();
-    };
-    void syncSession();
-    let rescanTimer: number | undefined;
     const assistantIsGenerating = (): boolean => {
       const selectors = [
         "button[data-testid='stop-button']",
@@ -36,6 +23,19 @@ export default defineContentScript({
         return Boolean(button && button.getClientRects().length > 0);
       });
     };
+    const syncSession = async (): Promise<void> => {
+      const sessionId = await syncKavrithSessionForCurrentPage();
+      if (activeSessionId !== sessionId) {
+        activeSessionId = sessionId;
+        if (!assistantIsGenerating()) primeExistingDirectives();
+        await restoreQueuedResults();
+      }
+      // The ChatGPT composer can mount after document_idle. Retry rendering on
+      // later DOM mutations even when the logical Kavrith session is unchanged.
+      ensureChatInitializer();
+    };
+    void syncSession();
+    let rescanTimer: number | undefined;
     const pendingAssistantMessages = new Set<HTMLElement>();
 
     new MutationObserver((records) => {

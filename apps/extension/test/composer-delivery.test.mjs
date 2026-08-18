@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { composerRollbackDecision, firstUsableCandidate } from "../dist-test/lib/composer-delivery.js";
+import {
+  composerRollbackDecision,
+  firstUsableCandidate,
+} from "../dist-test/lib/composer-delivery.js";
 
 test("failed delivery restores an untouched Kavrith insertion", () => {
   assert.equal(
@@ -11,11 +14,7 @@ test("failed delivery restores an untouched Kavrith insertion", () => {
 
 test("editor whitespace normalization still restores Kavrith insertion", () => {
   assert.equal(
-    composerRollbackDecision(
-      "",
-      "queued result\n",
-      "queued result\n\n",
-    ),
+    composerRollbackDecision("", "queued result\n", "queued result\n\n"),
     "restore",
   );
 });

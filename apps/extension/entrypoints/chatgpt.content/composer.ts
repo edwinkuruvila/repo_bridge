@@ -1,4 +1,7 @@
-import { composerRollbackDecision, firstUsableCandidate } from "../../lib/composer-delivery";
+import {
+  composerRollbackDecision,
+  firstUsableCandidate,
+} from "../../lib/composer-delivery";
 
 const COMPOSER_SELECTORS = [
   "#prompt-textarea[contenteditable='true']",

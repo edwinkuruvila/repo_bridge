@@ -26,6 +26,17 @@ test("streamed text keeps one directive occurrence id", () => {
   );
 });
 
+test("streamed startup directives keep one occurrence until generation completes", () => {
+  const partial = directiveOccurrenceId(5, 0, "invalid-run", "# kavrith:run");
+  const complete = directiveOccurrenceId(
+    5,
+    0,
+    "run",
+    "# kavrith:run\necho complete",
+  );
+  assert.equal(partial, complete);
+});
+
 test("streamed parse-state changes keep one directive occurrence id", () => {
   assert.equal(
     directiveOccurrenceId(3, 0, "invalid-run", "# kavrith:run"),

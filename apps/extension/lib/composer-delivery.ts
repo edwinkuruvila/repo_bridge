@@ -1,7 +1,10 @@
 export type ComposerRollbackDecision = "restore" | "leave-user-changes";
 
 function normalizedComposerText(value: string): string {
-  return value.replace(/\r\n?/g, "\n").replace(/[ \t]+\n/g, "\n").trimEnd();
+  return value
+    .replace(/\r\n?/g, "\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .trimEnd();
 }
 
 export function composerRollbackDecision(
@@ -12,8 +15,8 @@ export function composerRollbackDecision(
   const normalizedCurrent = normalizedComposerText(current);
   const normalizedInserted = normalizedComposerText(inserted);
   const normalizedOriginal = normalizedComposerText(original);
-  return normalizedCurrent === normalizedInserted
-      && normalizedInserted !== normalizedOriginal
+  return normalizedCurrent === normalizedInserted &&
+    normalizedInserted !== normalizedOriginal
     ? "restore"
     : "leave-user-changes";
 }
