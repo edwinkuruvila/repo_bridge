@@ -1,4 +1,5 @@
 import { syncKavrithSessionForCurrentPage } from "../../lib/kavrith-session";
+import { deferredPrimeDecision } from "../../lib/directive-stability";
 import { ensureChatInitializer } from "./initializer";
 import {
   assistantMessageForNode,
@@ -12,6 +13,10 @@ export default defineContentScript({
   runAt: "document_idle",
   main() {
     let activeSessionId: string | undefined;
+    let pendingInitialPrime = false;
+    let rescanTimer: number | undefined;
+    const pendingAssistantMessages = new Set<HTMLElement>();
+
     const assistantIsGenerating = (): boolean => {
       const selectors = [
         "button[data-testid='stop-button']",
@@ -23,20 +28,58 @@ export default defineContentScript({
         return Boolean(button && button.getClientRects().length > 0);
       });
     };
+
+    const scheduleRescan = (delay: number): void => {
+      if (rescanTimer !== undefined) {
+        window.clearTimeout(rescanTimer);
+      }
+      rescanTimer = window.setTimeout(scanWhenStable, delay);
+    };
+
     const syncSession = async (): Promise<void> => {
       const sessionId = await syncKavrithSessionForCurrentPage();
       if (activeSessionId !== sessionId) {
         activeSessionId = sessionId;
-        if (!assistantIsGenerating()) primeExistingDirectives();
+        pendingInitialPrime = true;
         await restoreQueuedResults();
+
+        const decision = deferredPrimeDecision(
+          pendingInitialPrime,
+          assistantIsGenerating(),
+        );
+        if (decision === "prime") {
+          primeExistingDirectives();
+          pendingInitialPrime = false;
+        } else if (decision === "wait") {
+          scheduleRescan(1_000);
+        }
       }
       // The ChatGPT composer can mount after document_idle. Retry rendering on
       // later DOM mutations even when the logical Kavrith session is unchanged.
       ensureChatInitializer();
     };
+
+    async function scanWhenStable(): Promise<void> {
+      rescanTimer = undefined;
+      if (assistantIsGenerating()) {
+        scheduleRescan(1_000);
+        return;
+      }
+
+      await syncSession();
+
+      if (deferredPrimeDecision(pendingInitialPrime, false) === "prime") {
+        primeExistingDirectives();
+        pendingInitialPrime = false;
+      }
+
+      for (const message of pendingAssistantMessages) {
+        inspect(message);
+      }
+      pendingAssistantMessages.clear();
+    }
+
     void syncSession();
-    let rescanTimer: number | undefined;
-    const pendingAssistantMessages = new Set<HTMLElement>();
 
     new MutationObserver((records) => {
       const changedAssistantMessages = new Set<HTMLElement>();
@@ -74,24 +117,7 @@ export default defineContentScript({
         pendingAssistantMessages.add(message);
       }
 
-      if (rescanTimer !== undefined) {
-        window.clearTimeout(rescanTimer);
-      }
-
-      rescanTimer = window.setTimeout(function scanWhenStable() {
-        rescanTimer = undefined;
-        if (assistantIsGenerating()) {
-          rescanTimer = window.setTimeout(scanWhenStable, 1_000);
-          return;
-        }
-        void (async () => {
-          await syncSession();
-          for (const message of pendingAssistantMessages) {
-            inspect(message);
-          }
-          pendingAssistantMessages.clear();
-        })();
-      }, 1_200);
+      scheduleRescan(1_200);
     }).observe(document.documentElement, {
       childList: true,
       characterData: true,
