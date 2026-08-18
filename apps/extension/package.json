@@ -17,7 +17,9 @@
     "@kavrith/protocol": "workspace:*"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "typescript": "^5.9.2",
+    "vite": "8.2.0",
     "wxt": "^0.21.4"
   }
 }
