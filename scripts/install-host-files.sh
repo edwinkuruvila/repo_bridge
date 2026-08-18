@@ -2,7 +2,8 @@
 set -eu
 
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-INSTALL_DIR="$HOME/Library/Application Support/Kavrith/host"
+. "$ROOT_DIR/scripts/platform-paths.sh"
+INSTALL_DIR=$(kavrith_host_install_dir)
 HOST_PATH="$INSTALL_DIR/run-host.sh"
 
 if [ ! -f "$ROOT_DIR/apps/host/dist/index.js" ]; then

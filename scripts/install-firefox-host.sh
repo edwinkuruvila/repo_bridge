@@ -2,9 +2,8 @@
 set -eu
 
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-INSTALL_DIR="$HOME/Library/Application Support/Kavrith/host"
-HOST_PATH="$INSTALL_DIR/run-host.sh"
-MANIFEST_DIR="$HOME/Library/Application Support/Mozilla/NativeMessagingHosts"
+. "$ROOT_DIR/scripts/platform-paths.sh"
+MANIFEST_DIR=$(kavrith_firefox_manifest_dir)
 MANIFEST_PATH="$MANIFEST_DIR/com.kavrith.host.json"
 
 HOST_PATH=$("$ROOT_DIR/scripts/install-host-files.sh")
