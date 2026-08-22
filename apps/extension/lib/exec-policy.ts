@@ -1,4 +1,4 @@
-interface KavrithExecRequest {
+interface RepoBridgeExecRequest {
   executable: string;
   args: string[];
 }
@@ -56,7 +56,7 @@ const DESTRUCTIVE_GIT_SUBCOMMANDS = new Set([
   "push",
 ]);
 
-export function classifyExecRisk(request: KavrithExecRequest): ExecRisk {
+export function classifyExecRisk(request: RepoBridgeExecRequest): ExecRisk {
   const executable = basename(request.executable);
   if (DESTRUCTIVE_EXECUTABLES.has(executable)) return "destructive";
   if (READ_ONLY_EXECUTABLES.has(executable)) return "read-only";

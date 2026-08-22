@@ -1,5 +1,5 @@
-import type { NativeResponse } from "@kavrith/protocol";
-import { PROTOCOL_VERSION } from "@kavrith/protocol";
+import type { NativeResponse } from "@repobridge/protocol";
+import { PROTOCOL_VERSION } from "@repobridge/protocol";
 import { handleCommandRequest } from "./command-handler.js";
 import { handleGitRequest } from "./git-handler.js";
 import { handleInspectionRequest } from "./inspection-handler.js";
@@ -25,7 +25,7 @@ async function pickTaskRoot(): Promise<string | undefined> {
       "/usr/bin/osascript",
       [
         "-e",
-        'POSIX path of (choose folder with prompt "Choose a repository for Kavrith")',
+        'POSIX path of (choose folder with prompt "Choose a repository for RepoBridge")',
       ],
       { cwd: process.cwd(), timeoutMs: 120_000, maxOutputBytes: 16 * 1024 },
     );
@@ -40,7 +40,7 @@ async function pickTaskRoot(): Promise<string | undefined> {
     const script = [
       "Add-Type -AssemblyName System.Windows.Forms",
       "$dialog = New-Object System.Windows.Forms.FolderBrowserDialog",
-      '$dialog.Description = "Choose a repository for Kavrith"',
+      '$dialog.Description = "Choose a repository for RepoBridge"',
       "if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {",
       "  Write-Output $dialog.SelectedPath",
       "}",
@@ -61,7 +61,7 @@ async function pickTaskRoot(): Promise<string | undefined> {
       [
         "--file-selection",
         "--directory",
-        "--title=Choose a repository for Kavrith",
+        "--title=Choose a repository for RepoBridge",
       ],
     ],
     [
@@ -70,7 +70,7 @@ async function pickTaskRoot(): Promise<string | undefined> {
         "--getexistingdirectory",
         ".",
         "--title",
-        "Choose a repository for Kavrith",
+        "Choose a repository for RepoBridge",
       ],
     ],
   ] as const) {

@@ -1,4 +1,4 @@
-import { PROTOCOL_VERSION, type NativeResponse } from "@kavrith/protocol";
+import { PROTOCOL_VERSION, type NativeResponse } from "@repobridge/protocol";
 import {
   ensureTaskSession,
   recordTaskOperation,

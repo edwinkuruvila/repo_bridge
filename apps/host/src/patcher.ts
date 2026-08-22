@@ -159,7 +159,7 @@ function parsePatch(patch: string): PatchFile[] {
     throw new PatchError("patch exceeds 256 KiB limit");
   const lines = patch.replace(/\r\n?/g, "\n").split("\n");
   if (lines[0] !== "*** Begin Patch" || lines.at(-1) !== "*** End Patch")
-    throw new PatchError("patch must use the Kavrith patch envelope");
+    throw new PatchError("patch must use the RepoBridge patch envelope");
   const files: PatchFile[] = [];
   let current: PatchFile | undefined;
   let hunk: string[] | undefined;
@@ -326,7 +326,7 @@ export async function applyWorkspacePatch(
       );
     targets.add(file.target);
   }
-  const temporary = await mkdtemp(join(workspace, ".kavrith-patch-"));
+  const temporary = await mkdtemp(join(workspace, ".repobridge-patch-"));
   const staged = prepared.map((file, index) => ({
     file,
     replacement: join(temporary, `${index}.new`),
@@ -430,14 +430,14 @@ export async function undoWorkspaceCheckpoint(
       const content = await readFile(canonical, "utf8");
       if (sha256(content) !== file.afterSha256) {
         throw new UndoError(
-          `UNDO_CONFLICT: ${file.path} changed after the Kavrith patch`,
+          `UNDO_CONFLICT: ${file.path} changed after the RepoBridge patch`,
         );
       }
       return { file, target: canonical, content, mode: details.mode & 0o777 };
     }),
   );
 
-  const temporary = await mkdtemp(join(workspace, ".kavrith-undo-"));
+  const temporary = await mkdtemp(join(workspace, ".repobridge-undo-"));
   const staged = current.map((entry, index) => ({
     ...entry,
     restore:

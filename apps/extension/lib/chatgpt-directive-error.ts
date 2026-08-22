@@ -1,4 +1,4 @@
-export interface KavrithDirectiveParseError {
+export interface RepoBridgeDirectiveParseError {
   type:
     | "read"
     | "context"
@@ -15,28 +15,28 @@ function normalizedDirectiveText(text: string): string {
   return text.replace(/\r\n?/g, "\n").trim();
 }
 
-export function kavrithDirectiveParseError(
+export function repobridgeDirectiveParseError(
   text: string,
-): KavrithDirectiveParseError | undefined {
+): RepoBridgeDirectiveParseError | undefined {
   const normalized = normalizedDirectiveText(text);
   const firstLine = normalized.split("\n", 1)[0] ?? "";
 
-  if (/^# kavrith:read(?:\s|$)/.test(firstLine)) {
+  if (/^# repobridge:read(?:\s|$)/.test(firstLine)) {
     return {
       type: "read",
       message:
-        'Malformed kavrith:read directive. Accepted forms: (1) one line: "# kavrith:read relative/path startLine endLine"; (2) four lines: "# kavrith:read", then "relative/path", then "startLine", then "endLine". startLine and endLine must be positive integers.',
+        'Malformed repobridge:read directive. Accepted forms: (1) one line: "# repobridge:read relative/path startLine endLine"; (2) four lines: "# repobridge:read", then "relative/path", then "startLine", then "endLine". startLine and endLine must be positive integers.',
     };
   }
 
-  if (/^# kavrith:context(?:\s|$)/.test(firstLine)) {
-    if (firstLine !== "# kavrith:context") {
+  if (/^# repobridge:context(?:\s|$)/.test(firstLine)) {
+    if (firstLine !== "# repobridge:context") {
       return {
         type: "context",
         message: [
-          "Malformed kavrith:context directive.",
+          "Malformed repobridge:context directive.",
           "Put the directive marker on its own line and the JSON payload on the next line.",
-          "# kavrith:context",
+          "# repobridge:context",
           '{"searches":["query"],"reads":[]}',
         ].join("\n"),
       };
@@ -50,8 +50,8 @@ export function kavrithDirectiveParseError(
       return {
         type: "context",
         message: [
-          "Malformed kavrith:context directive: payload is not valid JSON.",
-          "# kavrith:context",
+          "Malformed repobridge:context directive: payload is not valid JSON.",
+          "# repobridge:context",
           '{"searches":["query"],"reads":[]}',
         ].join("\n"),
       };
@@ -61,14 +61,14 @@ export function kavrithDirectiveParseError(
       return {
         type: "context",
         message:
-          "Malformed kavrith:context directive: JSON payload must be an object.",
+          "Malformed repobridge:context directive: JSON payload must be an object.",
       };
     }
 
     return {
       type: "context",
       message: [
-        "Malformed kavrith:context directive: JSON is valid, but it does not match the context schema.",
+        "Malformed repobridge:context directive: JSON is valid, but it does not match the context schema.",
         'searches: up to 8 strings (or {"query":"..."} / {"q":"..."} objects).',
         'reads: up to 16 path strings or {"path":"...","startLine":1,"endLine":500} objects.',
         "Optional: searchesByName, includeRepositoryMap, maxChars.",
@@ -77,37 +77,37 @@ export function kavrithDirectiveParseError(
     };
   }
 
-  if (/^# kavrith:exec(?:\s|$)/.test(firstLine)) {
+  if (/^# repobridge:exec(?:\s|$)/.test(firstLine)) {
     return {
       type: "exec",
       message: [
-        "Malformed kavrith:exec directive.",
+        "Malformed repobridge:exec directive.",
         "Use the exact marker followed by a JSON object containing a non-empty executable string and an args string array.",
-        "# kavrith:exec",
+        "# repobridge:exec",
         '{"executable":"git","args":["status","--short"]}',
       ].join("\n"),
     };
   }
 
-  if (/^# kavrith:run(?:\s|$)/.test(firstLine)) {
+  if (/^# repobridge:run(?:\s|$)/.test(firstLine)) {
     return {
       type: "run",
       message: [
-        "Malformed kavrith:run directive.",
+        "Malformed repobridge:run directive.",
         "Put the directive marker on its own line and the shell command on the following line(s).",
-        "# kavrith:run",
+        "# repobridge:run",
         "git status --short",
       ].join("\n"),
     };
   }
 
-  if (/^# kavrith:patch(?:\s|$)/.test(firstLine)) {
+  if (/^# repobridge:patch(?:\s|$)/.test(firstLine)) {
     return {
       type: "patch",
       message: [
-        "Malformed kavrith:patch directive.",
+        "Malformed repobridge:patch directive.",
         "Put the directive marker on its own line. The patch body must start with *** Begin Patch and end with *** End Patch.",
-        "# kavrith:patch",
+        "# repobridge:patch",
         "*** Begin Patch",
         "*** Update File: relative/path",
         "@@",
@@ -118,31 +118,31 @@ export function kavrithDirectiveParseError(
     };
   }
 
-  if (/^# kavrith:git-status(?:\s|$)/.test(firstLine)) {
+  if (/^# repobridge:git-status(?:\s|$)/.test(firstLine)) {
     return {
       type: "git-status",
       message:
-        'Malformed kavrith:git-status directive. Use exactly "# kavrith:git-status" with no payload.',
+        'Malformed repobridge:git-status directive. Use exactly "# repobridge:git-status" with no payload.',
     };
   }
 
-  if (/^# kavrith:git-diff(?:\s|$)/.test(firstLine)) {
+  if (/^# repobridge:git-diff(?:\s|$)/.test(firstLine)) {
     return {
       type: "git-diff",
       message: [
-        "Malformed kavrith:git-diff directive.",
-        'Use exactly "# kavrith:git-diff", optionally followed by a second line containing "staged".',
+        "Malformed repobridge:git-diff directive.",
+        'Use exactly "# repobridge:git-diff", optionally followed by a second line containing "staged".',
       ].join("\n"),
     };
   }
 
-  if (/^# kavrith:search(?:\s|$)/.test(firstLine)) {
+  if (/^# repobridge:search(?:\s|$)/.test(firstLine)) {
     return {
       type: "search",
       message: [
-        "Malformed kavrith:search directive.",
+        "Malformed repobridge:search directive.",
         "Put the directive marker on its own line and provide a non-empty search query on the following line(s).",
-        "# kavrith:search",
+        "# repobridge:search",
         "query",
       ].join("\n"),
     };

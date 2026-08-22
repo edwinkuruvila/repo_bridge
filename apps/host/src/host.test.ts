@@ -13,7 +13,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test, { after } from "node:test";
-import { PROTOCOL_VERSION } from "@kavrith/protocol";
+import { PROTOCOL_VERSION } from "@repobridge/protocol";
 import { MessageDecoder, encodeMessage } from "./framing.js";
 import { handleRequest } from "./handler.js";
 import { applyWorkspacePatch } from "./patcher.js";
@@ -21,9 +21,9 @@ import { runProcess } from "./process-runner.js";
 import { buildFilesystemRepositoryMap } from "./repository-map.js";
 
 const workspacePath = await realpath(
-  await mkdtemp(join(tmpdir(), "kavrith-test-")),
+  await mkdtemp(join(tmpdir(), "repobridge-test-")),
 );
-process.env.KAVRITH_CONFIG_PATH = join(workspacePath, "config.json");
+process.env.REPOBRIDGE_CONFIG_PATH = join(workspacePath, "config.json");
 await writeFile(
   join(workspacePath, "matches.txt"),
   "NativeMessage\nhello world; touch injected\n",
@@ -50,7 +50,7 @@ await writeFile(
 await symlink("/etc/passwd", join(workspacePath, "outside-link"));
 
 after(async () => {
-  delete process.env.KAVRITH_CONFIG_PATH;
+  delete process.env.REPOBRIDGE_CONFIG_PATH;
   await rm(workspacePath, { recursive: true });
 });
 

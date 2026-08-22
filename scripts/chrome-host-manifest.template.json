@@ -1,6 +1,6 @@
 {
-  "name": "com.kavrith.host",
-  "description": "Kavrith local native messaging host",
+  "name": "com.repobridge.host",
+  "description": "RepoBridge local native messaging host",
   "path": "__HOST_PATH__",
   "type": "stdio",
   "allowed_origins": ["chrome-extension://__EXTENSION_ID__/"]

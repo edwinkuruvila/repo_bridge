@@ -1,5 +1,5 @@
 {
-  "name": "@kavrith/extension",
+  "name": "@repobridge/extension",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
     "dev:chrome": "wxt -b chrome"
   },
   "dependencies": {
-    "@kavrith/protocol": "workspace:*"
+    "@repobridge/protocol": "workspace:*"
   },
   "devDependencies": {
     "esbuild": "0.28.2",

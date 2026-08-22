@@ -2,7 +2,7 @@ import { browser } from "wxt/browser";
 import { shouldAutoExecuteCommand } from "../../lib/access-policy";
 import { getChatInitialization } from "../../lib/chat-initialization";
 import { ACCESS_MODE_STORAGE_KEY, type AccessMode } from "../../lib/messages";
-import { kavrithSessionId } from "../../lib/kavrith-session";
+import { repobridgeSessionId } from "../../lib/repobridge-session";
 import { setDirectiveState } from "./directive-scanner";
 import { enqueueAutomaticOperation } from "./operation-queue";
 import { createActionButton, createControls } from "./result-ui";
@@ -16,7 +16,7 @@ export function approvalIsClaimed(identity: string): boolean {
 }
 
 async function getAccessMode(): Promise<AccessMode> {
-  const sessionId = kavrithSessionId();
+  const sessionId = repobridgeSessionId();
   const initialization = await getChatInitialization(sessionId);
   if (initialization) return initialization.accessMode;
 

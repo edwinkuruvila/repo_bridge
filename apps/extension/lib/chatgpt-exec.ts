@@ -1,4 +1,4 @@
-export interface KavrithExecRequest {
+export interface RepoBridgeExecRequest {
   executable: string;
   args: string[];
 }
@@ -7,14 +7,14 @@ const MAX_EXECUTABLE_LENGTH = 1_000;
 const MAX_ARGS = 256;
 const MAX_ARG_LENGTH = 8_000;
 
-export function parseKavrithExec(text: string): KavrithExecRequest | undefined {
+export function parseRepoBridgeExec(text: string): RepoBridgeExecRequest | undefined {
   const normalized = text.replace(/\r\n?/g, "\n");
-  const match = normalized.match(/^# kavrith:exec(?:\n|[ \t]+)([\s\S]*)$/);
+  const match = normalized.match(/^# repobridge:exec(?:\n|[ \t]+)([\s\S]*)$/);
   if (!match) return undefined;
   try {
     const value = JSON.parse((match[1] ?? "").trim()) as unknown;
     if (typeof value !== "object" || value === null) return undefined;
-    const candidate = value as Partial<KavrithExecRequest>;
+    const candidate = value as Partial<RepoBridgeExecRequest>;
     if (
       typeof candidate.executable !== "string" ||
       candidate.executable.length === 0 ||

@@ -36,7 +36,7 @@ test("routes canonical context messages", async () => {
   const { calls, deps } = harness();
   await routeBackgroundMessage(
     {
-      type: "KAVRITH_CONTEXT",
+      type: "REPOBRIDGE_CONTEXT",
       sessionId: "session",
       searches: ["needle"],
       reads: [],
@@ -66,7 +66,7 @@ test("authorizes mutations before dispatch", async () => {
   const { calls, deps } = harness();
   await routeBackgroundMessage(
     {
-      type: "KAVRITH_PATCH",
+      type: "REPOBRIDGE_PATCH",
       sessionId: "session",
       authorization: "full",
       patch: "*** Begin Patch\\n*** End Patch",
@@ -91,11 +91,11 @@ test("authorizes mutations before dispatch", async () => {
 test("routes git status and diff", async () => {
   const { calls, deps } = harness();
   await routeBackgroundMessage(
-    { type: "KAVRITH_GIT_STATUS", sessionId: "session" },
+    { type: "REPOBRIDGE_GIT_STATUS", sessionId: "session" },
     deps,
   );
   await routeBackgroundMessage(
-    { type: "KAVRITH_GIT_DIFF", sessionId: "session", staged: true },
+    { type: "REPOBRIDGE_GIT_DIFF", sessionId: "session", staged: true },
     deps,
   );
 

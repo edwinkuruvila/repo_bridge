@@ -1,14 +1,14 @@
-export interface KavrithContextRead {
+export interface RepoBridgeContextRead {
   path: string;
   startLine: number;
   endLine: number;
 }
 
-type ContextReadInput = KavrithContextRead | string;
+type ContextReadInput = RepoBridgeContextRead | string;
 
-export interface KavrithContextRequest {
+export interface RepoBridgeContextRequest {
   searches: string[];
-  reads: KavrithContextRead[];
+  reads: RepoBridgeContextRead[];
   searchesByName?: string[];
   includeRepositoryMap?: boolean;
   maxChars?: number;
@@ -56,9 +56,9 @@ const MAX_NAME_SEARCH_LENGTH = 500;
 const MIN_MAX_CHARS = 1_000;
 const MAX_MAX_CHARS = 100_000;
 
-function normalizeReads(value: unknown): KavrithContextRead[] | undefined {
+function normalizeReads(value: unknown): RepoBridgeContextRead[] | undefined {
   if (!Array.isArray(value) || value.length > MAX_READS) return undefined;
-  const reads: KavrithContextRead[] = [];
+  const reads: RepoBridgeContextRead[] = [];
   for (const entry of value as ContextReadInput[]) {
     if (typeof entry === "string") {
       if (entry.length === 0 || entry.includes("\0")) return undefined;
@@ -87,10 +87,10 @@ function normalizeReads(value: unknown): KavrithContextRead[] | undefined {
   return reads;
 }
 
-export function parseKavrithContext(
+export function parseRepoBridgeContext(
   text: string,
-): KavrithContextRequest | undefined {
-  const prefix = "# kavrith:context\n";
+): RepoBridgeContextRequest | undefined {
+  const prefix = "# repobridge:context\n";
   const normalized = text.replace(/\r\n?/g, "\n");
   if (!normalized.startsWith(prefix)) return undefined;
 
@@ -98,7 +98,7 @@ export function parseKavrithContext(
     const value = JSON.parse(normalized.slice(prefix.length).trim()) as unknown;
     if (typeof value !== "object" || value === null) return undefined;
 
-    const candidate = value as Partial<KavrithContextRequest>;
+    const candidate = value as Partial<RepoBridgeContextRequest>;
     const searches = normalizeSearches(candidate.searches ?? []);
     if (!searches) return undefined;
     const reads = normalizeReads(candidate.reads ?? []);

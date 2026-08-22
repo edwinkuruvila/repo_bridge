@@ -4,8 +4,8 @@ import type {
   InspectionContextResponse,
   InspectionSearchResponse,
   NativeResponse,
-} from "@kavrith/protocol";
-import { PROTOCOL_VERSION } from "@kavrith/protocol";
+} from "@repobridge/protocol";
+import { PROTOCOL_VERSION } from "@repobridge/protocol";
 import { findRipgrep } from "./executable-discovery.js";
 import {
   MAX_READ_LINES,

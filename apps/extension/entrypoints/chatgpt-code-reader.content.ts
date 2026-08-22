@@ -12,9 +12,9 @@ type CodeMirrorContent = HTMLElement & {
   };
 };
 
-const REQUEST_EVENT = "kavrith:code-text-request";
-const RESPONSE_EVENT = "kavrith:code-text-response";
-const BLOCK_ID_ATTRIBUTE = "data-kavrith-code-reader-id";
+const REQUEST_EVENT = "repobridge:code-text-request";
+const RESPONSE_EVENT = "repobridge:code-text-response";
+const BLOCK_ID_ATTRIBUTE = "data-repobridge-code-reader-id";
 const READONLY_TEXTBOX_SELECTOR = '[role="textbox"][aria-readonly="true"]';
 
 export default defineContentScript({

@@ -41,7 +41,7 @@ export function preferredDirectiveCodeText(
   // the DOM candidate when it is an actual continuation of the page-world
   // text; sharing a directive marker alone is not enough.
   if (
-    pageFirstLine?.startsWith("# kavrith:") &&
+    pageFirstLine?.startsWith("# repobridge:") &&
     normalizedDom.length > normalizedPage.length &&
     normalizedDom.startsWith(normalizedPage)
   ) {

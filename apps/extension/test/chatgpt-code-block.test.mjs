@@ -5,8 +5,8 @@ import {
   isUnprocessedCodeBlock,
   preferredDirectiveCodeText,
 } from "../dist-test/lib/chatgpt-code-block.js";
-import { parseKavrithGit } from "../dist-test/lib/chatgpt-git.js";
-import { parseKavrithRun } from "../dist-test/lib/chatgpt-run.js";
+import { parseRepoBridgeGit } from "../dist-test/lib/chatgpt-git.js";
+import { parseRepoBridgeRun } from "../dist-test/lib/chatgpt-run.js";
 
 function pre({ textbox, code, attributes = [] }) {
   return {
@@ -20,24 +20,24 @@ function pre({ textbox, code, attributes = [] }) {
 
 test("extracts directives from alternate code elements", () => {
   assert.equal(
-    directiveCodeText(pre({ code: "  # kavrith:git-status\n" })),
-    "# kavrith:git-status",
+    directiveCodeText(pre({ code: "  # repobridge:git-status\n" })),
+    "# repobridge:git-status",
   );
 });
 
 test("prefers CodeMirror textbox text over pre UI text", () => {
   const text = directiveCodeText(
     pre({
-      textbox: "# kavrith:git-status",
-      code: "Copy# kavrith:git-status",
+      textbox: "# repobridge:git-status",
+      code: "Copy# repobridge:git-status",
     }),
   );
-  assert.deepEqual(parseKavrithGit(text), { type: "status" });
+  assert.deepEqual(parseRepoBridgeGit(text), { type: "status" });
 });
 
-test("ignores non-Kavrith code blocks", () => {
+test("ignores non-RepoBridge code blocks", () => {
   assert.equal(
-    parseKavrithGit(
+    parseRepoBridgeGit(
       directiveCodeText(pre({ textbox: "console.log('hello')" })),
     ),
     undefined,
@@ -69,10 +69,10 @@ test("processed and claimed blocks are not processed again", () => {
 
 test("prefers the more complete matching directive candidate", () => {
   const text = preferredDirectiveCodeText(
-    "# kavrith:run\nset -e",
-    "# kavrith:run\nset -e\nprintf 'done\\n'",
+    "# repobridge:run\nset -e",
+    "# repobridge:run\nset -e\nprintf 'done\\n'",
   );
-  assert.deepEqual(parseKavrithRun(text), {
+  assert.deepEqual(parseRepoBridgeRun(text), {
     command: "set -e\nprintf 'done\\n'",
   });
 });
@@ -80,19 +80,19 @@ test("prefers the more complete matching directive candidate", () => {
 test("does not replace canonical code with unrelated longer DOM text", () => {
   assert.equal(
     preferredDirectiveCodeText(
-      "# kavrith:git-status",
-      "Copy# kavrith:git-status and some extra UI text",
+      "# repobridge:git-status",
+      "Copy# repobridge:git-status and some extra UI text",
     ),
-    "# kavrith:git-status",
+    "# repobridge:git-status",
   );
 });
 
 test("does not prefer a divergent candidate with the same directive marker", () => {
   assert.equal(
     preferredDirectiveCodeText(
-      "# kavrith:run\necho expected",
-      "# kavrith:run\necho different and much longer",
+      "# repobridge:run\necho expected",
+      "# repobridge:run\necho different and much longer",
     ),
-    "# kavrith:run\necho expected",
+    "# repobridge:run\necho expected",
   );
 });

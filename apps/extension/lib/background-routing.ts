@@ -1,14 +1,14 @@
-import type { NativeRequest, NativeResponse } from "@kavrith/protocol";
+import type { NativeRequest, NativeResponse } from "@repobridge/protocol";
 import {
-  isKavrithContextMessage,
-  isKavrithExecMessage,
-  isKavrithGitDiffMessage,
-  isKavrithGitStatusMessage,
-  isKavrithPatchMessage,
-  isKavrithReadMessage,
-  isKavrithRunMessage,
-  isKavrithSearchMessage,
-  isKavrithUndoMessage,
+  isRepoBridgeContextMessage,
+  isRepoBridgeExecMessage,
+  isRepoBridgeGitDiffMessage,
+  isRepoBridgeGitStatusMessage,
+  isRepoBridgePatchMessage,
+  isRepoBridgeReadMessage,
+  isRepoBridgeRunMessage,
+  isRepoBridgeSearchMessage,
+  isRepoBridgeUndoMessage,
 } from "./messages.js";
 
 type NativeRequestInput = NativeRequest extends infer Request
@@ -48,7 +48,7 @@ export async function routeBackgroundMessage(
       return deps.sendNative({ method: "task.root.pick" });
   }
 
-  if (isKavrithSearchMessage(message)) {
+  if (isRepoBridgeSearchMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     const query = message.query.trim();
     if (!query) throw new Error("A non-empty search query is required");
@@ -58,7 +58,7 @@ export async function routeBackgroundMessage(
     );
   }
 
-  if (isKavrithReadMessage(message)) {
+  if (isRepoBridgeReadMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     return deps.sendTracked(
       {
@@ -72,7 +72,7 @@ export async function routeBackgroundMessage(
     );
   }
 
-  if (isKavrithContextMessage(message)) {
+  if (isRepoBridgeContextMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     return deps.sendTracked(
       {
@@ -103,7 +103,7 @@ export async function routeBackgroundMessage(
     return deps.sendTracked(input, sessionId);
   };
 
-  if (isKavrithPatchMessage(message)) {
+  if (isRepoBridgePatchMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     return mutation(message.authorization, message.sessionId, {
       method: "workspace.patch",
@@ -112,7 +112,7 @@ export async function routeBackgroundMessage(
     });
   }
 
-  if (isKavrithRunMessage(message)) {
+  if (isRepoBridgeRunMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     return mutation(message.authorization, message.sessionId, {
       method: "command.run",
@@ -121,7 +121,7 @@ export async function routeBackgroundMessage(
     });
   }
 
-  if (isKavrithUndoMessage(message)) {
+  if (isRepoBridgeUndoMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     return mutation(message.authorization, message.sessionId, {
       method: "workspace.undo",
@@ -130,7 +130,7 @@ export async function routeBackgroundMessage(
     });
   }
 
-  if (isKavrithGitStatusMessage(message)) {
+  if (isRepoBridgeGitStatusMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     return deps.sendTracked(
       { method: "git.status", rootPath },
@@ -138,7 +138,7 @@ export async function routeBackgroundMessage(
     );
   }
 
-  if (isKavrithGitDiffMessage(message)) {
+  if (isRepoBridgeGitDiffMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     return deps.sendTracked(
       { method: "git.diff", rootPath, staged: message.staged },
@@ -146,7 +146,7 @@ export async function routeBackgroundMessage(
     );
   }
 
-  if (isKavrithExecMessage(message)) {
+  if (isRepoBridgeExecMessage(message)) {
     const rootPath = await deps.taskRoot(message.sessionId);
     return mutation(message.authorization, message.sessionId, {
       method: "command.exec",

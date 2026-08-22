@@ -3,12 +3,12 @@ import {
   PROTOCOL_VERSION,
   type NativeRequest,
   type NativeResponse,
-} from "@kavrith/protocol";
+} from "@repobridge/protocol";
 import { ACCESS_MODE_STORAGE_KEY, type AccessMode } from "../lib/messages";
 import { routeBackgroundMessage } from "../lib/background-routing";
 import { getChatInitialization } from "../lib/chat-initialization";
 
-const HOST_NAME = "com.kavrith.host";
+const HOST_NAME = "com.repobridge.host";
 let port: ReturnType<typeof browser.runtime.connectNative> | undefined;
 const pending = new Map<
   string,
@@ -45,7 +45,7 @@ function getPort(): ReturnType<typeof browser.runtime.connectNative> {
       firefoxError?.message ??
       browser.runtime.lastError?.message ??
       "Native host disconnected";
-    console.error("Kavrith local host disconnected:", message);
+    console.error("RepoBridge local host disconnected:", message);
     port = undefined;
     rejectPending(message);
   });
@@ -74,10 +74,10 @@ function sendNative(input: NativeRequestInput): Promise<NativeResponse> {
 }
 
 async function taskRoot(sessionId?: string): Promise<string> {
-  if (!sessionId) throw new Error("Kavrith session id is unavailable");
+  if (!sessionId) throw new Error("RepoBridge session id is unavailable");
   const initialization = await getChatInitialization(sessionId);
   if (!initialization)
-    throw new Error("Kavrith is not initialized for this chat");
+    throw new Error("RepoBridge is not initialized for this chat");
   return initialization.rootPath;
 }
 
@@ -126,7 +126,7 @@ async function recordOperation(
       ...(checkpointId === undefined ? {} : { checkpointId }),
     });
   } catch (cause) {
-    console.warn("Kavrith task journal write failed:", cause);
+    console.warn("RepoBridge task journal write failed:", cause);
   }
 }
 
@@ -142,7 +142,7 @@ async function sendTracked(
         sessionId,
       });
     } catch (cause) {
-      console.warn("Kavrith task session initialization failed:", cause);
+      console.warn("RepoBridge task session initialization failed:", cause);
     }
   }
   const response = await sendNative(input);

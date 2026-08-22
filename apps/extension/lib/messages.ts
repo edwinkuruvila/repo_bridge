@@ -2,88 +2,88 @@ export const ACCESS_MODE_STORAGE_KEY = "accessMode";
 export type AccessMode = "approval" | "full";
 export type MutationAuthorization = "approved" | "full";
 
-interface KavrithChatMessage {
+interface RepoBridgeChatMessage {
   sessionId?: string;
 }
 
-export interface KavrithSearchMessage extends KavrithChatMessage {
-  type: "KAVRITH_SEARCH";
+export interface RepoBridgeSearchMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_SEARCH";
   query: string;
 }
 
-export interface KavrithReadMessage extends KavrithChatMessage {
-  type: "KAVRITH_READ";
+export interface RepoBridgeReadMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_READ";
   path: string;
   startLine: number;
   endLine: number;
 }
-export interface KavrithContextMessage extends KavrithChatMessage {
-  type: "KAVRITH_CONTEXT";
+export interface RepoBridgeContextMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_CONTEXT";
   searches: string[];
   reads: Array<{ path: string; startLine: number; endLine: number }>;
   searchesByName?: string[];
   includeRepositoryMap?: boolean;
   maxChars?: number;
 }
-export interface KavrithPatchMessage extends KavrithChatMessage {
-  type: "KAVRITH_PATCH";
+export interface RepoBridgePatchMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_PATCH";
   patch: string;
   authorization: MutationAuthorization;
 }
-export interface KavrithRunMessage extends KavrithChatMessage {
-  type: "KAVRITH_RUN";
+export interface RepoBridgeRunMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_RUN";
   command: string;
   authorization: MutationAuthorization;
 }
-export interface KavrithUndoMessage extends KavrithChatMessage {
-  type: "KAVRITH_UNDO";
+export interface RepoBridgeUndoMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_UNDO";
   checkpointId: string;
   authorization: MutationAuthorization;
 }
-export interface KavrithGitStatusMessage extends KavrithChatMessage {
-  type: "KAVRITH_GIT_STATUS";
+export interface RepoBridgeGitStatusMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_GIT_STATUS";
 }
-export interface KavrithGitDiffMessage extends KavrithChatMessage {
-  type: "KAVRITH_GIT_DIFF";
+export interface RepoBridgeGitDiffMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_GIT_DIFF";
   staged: boolean;
 }
-export interface KavrithExecMessage extends KavrithChatMessage {
-  type: "KAVRITH_EXEC";
+export interface RepoBridgeExecMessage extends RepoBridgeChatMessage {
+  type: "REPOBRIDGE_EXEC";
   executable: string;
   args: string[];
   authorization: MutationAuthorization;
 }
 
-export function isKavrithSearchMessage(
+export function isRepoBridgeSearchMessage(
   message: unknown,
-): message is KavrithSearchMessage {
+): message is RepoBridgeSearchMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithSearchMessage>;
+  const candidate = message as Partial<RepoBridgeSearchMessage>;
   return (
-    candidate.type === "KAVRITH_SEARCH" && typeof candidate.query === "string"
+    candidate.type === "REPOBRIDGE_SEARCH" && typeof candidate.query === "string"
   );
 }
 
-export function isKavrithReadMessage(
+export function isRepoBridgeReadMessage(
   message: unknown,
-): message is KavrithReadMessage {
+): message is RepoBridgeReadMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithReadMessage>;
+  const candidate = message as Partial<RepoBridgeReadMessage>;
   return (
-    candidate.type === "KAVRITH_READ" &&
+    candidate.type === "REPOBRIDGE_READ" &&
     typeof candidate.path === "string" &&
     Number.isSafeInteger(candidate.startLine) &&
     Number.isSafeInteger(candidate.endLine)
   );
 }
 
-export function isKavrithContextMessage(
+export function isRepoBridgeContextMessage(
   message: unknown,
-): message is KavrithContextMessage {
+): message is RepoBridgeContextMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithContextMessage>;
+  const candidate = message as Partial<RepoBridgeContextMessage>;
   return (
-    candidate.type === "KAVRITH_CONTEXT" &&
+    candidate.type === "REPOBRIDGE_CONTEXT" &&
     Array.isArray(candidate.searches) &&
     candidate.searches.every((query) => typeof query === "string") &&
     Array.isArray(candidate.reads) &&
@@ -104,67 +104,67 @@ export function isKavrithContextMessage(
       Number.isSafeInteger(candidate.maxChars))
   );
 }
-export function isKavrithPatchMessage(
+export function isRepoBridgePatchMessage(
   message: unknown,
-): message is KavrithPatchMessage {
+): message is RepoBridgePatchMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithPatchMessage>;
+  const candidate = message as Partial<RepoBridgePatchMessage>;
   return (
-    candidate.type === "KAVRITH_PATCH" &&
+    candidate.type === "REPOBRIDGE_PATCH" &&
     typeof candidate.patch === "string" &&
     (candidate.authorization === "approved" ||
       candidate.authorization === "full")
   );
 }
-export function isKavrithRunMessage(
+export function isRepoBridgeRunMessage(
   message: unknown,
-): message is KavrithRunMessage {
+): message is RepoBridgeRunMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithRunMessage>;
+  const candidate = message as Partial<RepoBridgeRunMessage>;
   return (
-    candidate.type === "KAVRITH_RUN" &&
+    candidate.type === "REPOBRIDGE_RUN" &&
     typeof candidate.command === "string" &&
     (candidate.authorization === "approved" ||
       candidate.authorization === "full")
   );
 }
-export function isKavrithUndoMessage(
+export function isRepoBridgeUndoMessage(
   message: unknown,
-): message is KavrithUndoMessage {
+): message is RepoBridgeUndoMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithUndoMessage>;
+  const candidate = message as Partial<RepoBridgeUndoMessage>;
   return (
-    candidate.type === "KAVRITH_UNDO" &&
+    candidate.type === "REPOBRIDGE_UNDO" &&
     typeof candidate.checkpointId === "string" &&
     (candidate.authorization === "approved" ||
       candidate.authorization === "full")
   );
 }
-export function isKavrithGitStatusMessage(
+export function isRepoBridgeGitStatusMessage(
   message: unknown,
-): message is KavrithGitStatusMessage {
+): message is RepoBridgeGitStatusMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithGitStatusMessage>;
-  return candidate.type === "KAVRITH_GIT_STATUS";
+  const candidate = message as Partial<RepoBridgeGitStatusMessage>;
+  return candidate.type === "REPOBRIDGE_GIT_STATUS";
 }
-export function isKavrithGitDiffMessage(
+export function isRepoBridgeGitDiffMessage(
   message: unknown,
-): message is KavrithGitDiffMessage {
+): message is RepoBridgeGitDiffMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithGitDiffMessage>;
+  const candidate = message as Partial<RepoBridgeGitDiffMessage>;
   return (
-    candidate.type === "KAVRITH_GIT_DIFF" &&
+    candidate.type === "REPOBRIDGE_GIT_DIFF" &&
     typeof candidate.staged === "boolean"
   );
 }
 
-export function isKavrithExecMessage(
+export function isRepoBridgeExecMessage(
   message: unknown,
-): message is KavrithExecMessage {
+): message is RepoBridgeExecMessage {
   if (typeof message !== "object" || message === null) return false;
-  const candidate = message as Partial<KavrithExecMessage>;
+  const candidate = message as Partial<RepoBridgeExecMessage>;
   return (
-    candidate.type === "KAVRITH_EXEC" &&
+    candidate.type === "REPOBRIDGE_EXEC" &&
     typeof candidate.executable === "string" &&
     Array.isArray(candidate.args) &&
     candidate.args.every((arg) => typeof arg === "string") &&

@@ -3,17 +3,17 @@ set -eu
 
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 . "$ROOT_DIR/scripts/platform-paths.sh"
-MANIFEST_DIR=$(kavrith_chrome_manifest_dir)
-MANIFEST_PATH="$MANIFEST_DIR/com.kavrith.host.json"
+MANIFEST_DIR=$(repobridge_chrome_manifest_dir)
+MANIFEST_PATH="$MANIFEST_DIR/com.repobridge.host.json"
 
 if [ "${1:-}" = "--" ]; then
   shift
 fi
 
-EXTENSION_ID=${1:-${KAVRITH_CHROME_EXTENSION_ID:-}}
+EXTENSION_ID=${1:-${REPOBRIDGE_CHROME_EXTENSION_ID:-}}
 if ! printf '%s' "$EXTENSION_ID" | grep -Eq '^[a-p]{32}$'; then
   echo "Usage: $0 <chrome-extension-id>" >&2
-  echo "Find the 32-character ID at chrome://extensions after loading Kavrith unpacked." >&2
+  echo "Find the 32-character ID at chrome://extensions after loading RepoBridge unpacked." >&2
   exit 1
 fi
 

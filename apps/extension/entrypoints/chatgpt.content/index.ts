@@ -1,4 +1,4 @@
-import { syncKavrithSessionForCurrentPage } from "../../lib/kavrith-session";
+import { syncRepoBridgeSessionForCurrentPage } from "../../lib/repobridge-session";
 import { deferredPrimeDecision } from "../../lib/directive-stability";
 import { ensureChatInitializer } from "./initializer";
 import {
@@ -37,7 +37,7 @@ export default defineContentScript({
     };
 
     const syncSession = async (): Promise<void> => {
-      const sessionId = await syncKavrithSessionForCurrentPage();
+      const sessionId = await syncRepoBridgeSessionForCurrentPage();
       if (activeSessionId !== sessionId) {
         activeSessionId = sessionId;
         pendingInitialPrime = true;
@@ -55,7 +55,7 @@ export default defineContentScript({
         }
       }
       // The ChatGPT composer can mount after document_idle. Retry rendering on
-      // later DOM mutations even when the logical Kavrith session is unchanged.
+      // later DOM mutations even when the logical RepoBridge session is unchanged.
       ensureChatInitializer();
     };
 

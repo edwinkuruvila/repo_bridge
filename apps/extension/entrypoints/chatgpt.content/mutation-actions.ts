@@ -1,12 +1,12 @@
-import { sendKavrithMessage } from "../../lib/background-client";
-import type { KavrithExecRequest } from "../../lib/chatgpt-exec";
+import { sendRepoBridgeMessage } from "../../lib/background-client";
+import type { RepoBridgeExecRequest } from "../../lib/chatgpt-exec";
 import { classifyExecRisk } from "../../lib/exec-policy";
 import {
   patchPreview,
-  type KavrithPatchRequest,
+  type RepoBridgePatchRequest,
 } from "../../lib/chatgpt-patch";
-import type { KavrithRunRequest } from "../../lib/chatgpt-run";
-import { kavrithSessionId } from "../../lib/kavrith-session";
+import type { RepoBridgeRunRequest } from "../../lib/chatgpt-run";
+import { repobridgeSessionId } from "../../lib/repobridge-session";
 import { approvalIsClaimed, setupApprovalAction } from "./approval-action";
 import { setDirectiveState } from "./directive-scanner";
 import { returnErrorToChatGPT, returnResultToChatGPT } from "./result-delivery";
@@ -18,7 +18,7 @@ import {
 } from "./result-ui";
 import { isTrustedUserGesture } from "../../lib/user-gesture";
 
-const PROCESSED_ATTRIBUTE = "data-kavrith-action";
+const PROCESSED_ATTRIBUTE = "data-repobridge-action";
 
 type MutationActionDependencies = {
   currentTaskRoot: () => Promise<string>;
@@ -26,12 +26,12 @@ type MutationActionDependencies = {
 };
 
 function chatSession(): { sessionId: string } {
-  return { sessionId: kavrithSessionId() };
+  return { sessionId: repobridgeSessionId() };
 }
 
 export function addPatchAction(
   code: HTMLElement,
-  request: KavrithPatchRequest,
+  request: RepoBridgePatchRequest,
   identity: string,
   forceApproval = false,
   dependencies: MutationActionDependencies,
@@ -61,8 +61,8 @@ export function addPatchAction(
       const rootPath = await dependencies.currentTaskRoot();
       renderPanel(panel, "Applying changes", rootPath);
       try {
-        const response = await sendKavrithMessage({
-          type: "KAVRITH_PATCH",
+        const response = await sendRepoBridgeMessage({
+          type: "REPOBRIDGE_PATCH",
           ...chatSession(),
           patch,
           authorization,
@@ -70,7 +70,7 @@ export function addPatchAction(
         if (!response.ok)
           throw new Error(`${response.error.code}: ${response.error.message}`);
         const result = response;
-        const text = `<kavrith_result>\nroot: ${rootPath}\noperation: workspace.patch\nstatus: applied\ncheckpoint_id: ${result.result.checkpointId}\nfiles_changed: ${result.result.filesChanged.length}\n\nfiles:\n${result.result.filesChanged.join("\n")}\n</kavrith_result>`;
+        const text = `<repobridge_result>\nroot: ${rootPath}\noperation: workspace.patch\nstatus: applied\ncheckpoint_id: ${result.result.checkpointId}\nfiles_changed: ${result.result.filesChanged.length}\n\nfiles:\n${result.result.filesChanged.join("\n")}\n</repobridge_result>`;
         renderPanel(
           panel,
           "Changes applied",
@@ -87,8 +87,8 @@ export function addPatchAction(
           undo.disabled = true;
           renderPanel(panel, "Undoing changes", rootPath);
           try {
-            const undoResponse = await sendKavrithMessage({
-              type: "KAVRITH_UNDO",
+            const undoResponse = await sendRepoBridgeMessage({
+              type: "REPOBRIDGE_UNDO",
               ...chatSession(),
               checkpointId: result.result.checkpointId,
               authorization: "approved",
@@ -114,7 +114,7 @@ export function addPatchAction(
               rootPath,
             );
             panel.textContent = [
-              `Kavrith undo request failed: ${cause instanceof Error ? cause.message : String(cause)}`,
+              `RepoBridge undo request failed: ${cause instanceof Error ? cause.message : String(cause)}`,
               "",
               "The undo may have completed before the response was lost.",
               "Inspect repository state before trying another mutation.",
@@ -131,7 +131,7 @@ export function addPatchAction(
           rootPath,
         );
         panel.textContent = [
-          `Kavrith patch request failed: ${cause instanceof Error ? cause.message : String(cause)}`,
+          `RepoBridge patch request failed: ${cause instanceof Error ? cause.message : String(cause)}`,
           "",
           "The patch may have been applied before the response was lost.",
           "Inspect the repository state before issuing a new patch.",
@@ -143,7 +143,7 @@ export function addPatchAction(
 
 export function addRunAction(
   code: HTMLElement,
-  request: KavrithRunRequest,
+  request: RepoBridgeRunRequest,
   identity: string,
   forceApproval = false,
   dependencies: MutationActionDependencies,
@@ -172,8 +172,8 @@ export function addRunAction(
       const rootPath = await dependencies.currentTaskRoot();
       renderPanel(panel, "Running command", rootPath, command);
       try {
-        const response = await sendKavrithMessage({
-          type: "KAVRITH_RUN",
+        const response = await sendRepoBridgeMessage({
+          type: "REPOBRIDGE_RUN",
           ...chatSession(),
           command,
           authorization,
@@ -181,7 +181,7 @@ export function addRunAction(
         if (!response.ok)
           throw new Error(`${response.error.code}: ${response.error.message}`);
         const result = response;
-        const text = `<kavrith_result>\nroot: ${rootPath}\noperation: command.run\ncommand: ${command}\nexit_code: ${result.result.exitCode}\nduration_ms: ${result.result.durationMs}\ntimed_out: ${result.result.timedOut}\ntruncated: ${result.result.truncated}\n\nstdout:\n${result.result.stdout}${result.result.stderr ? `\n\nstderr:\n${result.result.stderr}` : ""}\n</kavrith_result>`;
+        const text = `<repobridge_result>\nroot: ${rootPath}\noperation: command.run\ncommand: ${command}\nexit_code: ${result.result.exitCode}\nduration_ms: ${result.result.durationMs}\ntimed_out: ${result.result.timedOut}\ntruncated: ${result.result.truncated}\n\nstdout:\n${result.result.stdout}${result.result.stderr ? `\n\nstderr:\n${result.result.stderr}` : ""}\n</repobridge_result>`;
         renderPanel(
           panel,
           result.result.exitCode === 0
@@ -207,7 +207,7 @@ export function addRunAction(
           rootPath,
         );
         panel.textContent = [
-          `Kavrith command request failed: ${errorMessage(cause)}`,
+          `RepoBridge command request failed: ${errorMessage(cause)}`,
           "",
           "The command may have executed before the response was lost.",
           "Inspect local state before issuing a new command.",
@@ -219,7 +219,7 @@ export function addRunAction(
 
 export function addExecAction(
   code: HTMLElement,
-  request: KavrithExecRequest,
+  request: RepoBridgeExecRequest,
   identity: string,
   forceApproval = false,
   dependencies: MutationActionDependencies,
@@ -255,8 +255,8 @@ export function addExecAction(
         commandDisplay,
       );
       try {
-        const response = await sendKavrithMessage({
-          type: "KAVRITH_EXEC",
+        const response = await sendRepoBridgeMessage({
+          type: "REPOBRIDGE_EXEC",
           ...chatSession(),
           executable: request.executable,
           args: request.args,
@@ -265,7 +265,7 @@ export function addExecAction(
         if (!response.ok)
           throw new Error(`${response.error.code}: ${response.error.message}`);
         const result = response;
-        const text = `<kavrith_result>\nroot: ${rootPath}\noperation: command.exec\nexecutable: ${result.result.executable}\nargs: ${JSON.stringify(result.result.args)}\nrisk: ${risk}\nexit_code: ${result.result.exitCode}\nduration_ms: ${result.result.durationMs}\ntimed_out: ${result.result.timedOut}\ntruncated: ${result.result.truncated}\n\nstdout:\n${result.result.stdout}${result.result.stderr ? `\n\nstderr:\n${result.result.stderr}` : ""}\n</kavrith_result>`;
+        const text = `<repobridge_result>\nroot: ${rootPath}\noperation: command.exec\nexecutable: ${result.result.executable}\nargs: ${JSON.stringify(result.result.args)}\nrisk: ${risk}\nexit_code: ${result.result.exitCode}\nduration_ms: ${result.result.durationMs}\ntimed_out: ${result.result.timedOut}\ntruncated: ${result.result.truncated}\n\nstdout:\n${result.result.stdout}${result.result.stderr ? `\n\nstderr:\n${result.result.stderr}` : ""}\n</repobridge_result>`;
         renderPanel(
           panel,
           result.result.exitCode === 0
@@ -291,7 +291,7 @@ export function addExecAction(
           rootPath,
         );
         panel.textContent = [
-          `Kavrith structured command request failed: ${errorMessage(cause)}`,
+          `RepoBridge structured command request failed: ${errorMessage(cause)}`,
           "",
           "The command may have executed before the response was lost.",
           "Inspect local state before issuing it again.",

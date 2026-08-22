@@ -6,13 +6,13 @@ import {
   type ChatInitialization,
 } from "../../lib/chat-initialization";
 import {
-  kavrithSessionId,
-  syncKavrithSessionForCurrentPage,
-} from "../../lib/kavrith-session";
+  repobridgeSessionId,
+  syncRepoBridgeSessionForCurrentPage,
+} from "../../lib/repobridge-session";
 import { sendToChatGPT } from "./composer";
 import { isTrustedUserGesture } from "../../lib/user-gesture";
 
-const INITIALIZER_ID = "kavrith-chat-initializer";
+const INITIALIZER_ID = "repobridge-chat-initializer";
 
 type InitializationPolicy = Pick<ChatInitialization, "accessMode" | "rootPath">;
 
@@ -31,43 +31,43 @@ function bootstrapMessage(initialization: InitializationPolicy): string {
 
   return [
     "RepoBridge gives you access to the repository selected for this ChatGPT conversation.",
-    "RepoBridge is provided by a browser extension and local host; it is not a native ChatGPT tool and will not appear in your available tools. Invoke it by outputting one of the compatibility directives below in a fenced code block. These currently use the kavrith: protocol marker. The extension executes them locally and returns the result in the conversation. Do not look for or attempt to call a separate RepoBridge tool.",
+    "RepoBridge is provided by a browser extension and local host; it is not a native ChatGPT tool and will not appear in your available tools. Invoke it by outputting one of the compatibility directives below in a fenced code block. These currently use the repobridge: protocol marker. The extension executes them locally and returns the result in the conversation. Do not look for or attempt to call a separate RepoBridge tool.",
     `Access policy: ${access}.`,
     "Use RepoBridge for repository work instead of asking the user to paste files or run commands for you.",
     "When the user requests repository inspection or modification, issue the appropriate RepoBridge compatibility directive instead of only describing what you plan to do.",
     "RepoBridge supports repository inspection, code navigation, file reading, file modification, command execution, and Git inspection.",
     "Use inspection directives to gather repository evidence before answering questions that depend on repository contents. Use modification or command directives when the task requires changing or executing something.",
     "Choose directives by capability:",
-    "- kavrith:context combines multiple repository searches, file reads, name-based repository searches, and an optional repository map into one inspection request.",
-    "- kavrith:search searches text contained in repository files.",
-    "- kavrith:read reads a known repository-relative file over a specified line range.",
-    "- kavrith:patch applies structured file changes.",
-    "- kavrith:exec executes one program directly. Its payload is JSON with an executable string and args string array. Each args entry is passed as one literal argument; no shell parsing occurs.",
-    "- kavrith:run executes shell command text. Use it when shell features such as &&, pipes, redirects, variable expansion, or other shell syntax are required.",
-    "- kavrith:git-status and kavrith:git-diff inspect repository Git state.",
-    "Prefer the smallest directive that provides the evidence or action needed. Use kavrith:context when several inspection operations can be combined efficiently.",
+    "- repobridge:context combines multiple repository searches, file reads, name-based repository searches, and an optional repository map into one inspection request.",
+    "- repobridge:search searches text contained in repository files.",
+    "- repobridge:read reads a known repository-relative file over a specified line range.",
+    "- repobridge:patch applies structured file changes.",
+    "- repobridge:exec executes one program directly. Its payload is JSON with an executable string and args string array. Each args entry is passed as one literal argument; no shell parsing occurs.",
+    "- repobridge:run executes shell command text. Use it when shell features such as &&, pipes, redirects, variable expansion, or other shell syntax are required.",
+    "- repobridge:git-status and repobridge:git-diff inspect repository Git state.",
+    "Prefer the smallest directive that provides the evidence or action needed. Use repobridge:context when several inspection operations can be combined efficiently.",
     "Directive payloads must follow the accepted schemas shown below; do not invent unsupported fields or alternate payload shapes.",
     "Formatting is strict: for context, exec, and run, put the directive marker on its own line and the payload on the next line. Read accepts either the one-line or multiline form shown below.",
-    'For kavrith:context, searches and reads are optional and default to empty arrays. reads may be path strings (default lines 1-500) or objects such as {"path":"src/index.ts","startLine":1,"endLine":200}. Limits: at most 8 searches, 16 reads, and 16 searchesByName entries. maxChars must be between 1000 and 100000. At least one search, read, searchesByName entry, or includeRepositoryMap=true is required.',
-    'For kavrith:exec, put JSON on the line after the directive marker, for example {"executable":"git","args":["status","--short"]}. Do not place shell operators inside args expecting them to execute.',
-    "For kavrith:run, put the complete shell command on the line after the directive marker.",
+    'For repobridge:context, searches and reads are optional and default to empty arrays. reads may be path strings (default lines 1-500) or objects such as {"path":"src/index.ts","startLine":1,"endLine":200}. Limits: at most 8 searches, 16 reads, and 16 searchesByName entries. maxChars must be between 1000 and 100000. At least one search, read, searchesByName entry, or includeRepositoryMap=true is required.',
+    'For repobridge:exec, put JSON on the line after the directive marker, for example {"executable":"git","args":["status","--short"]}. Do not place shell operators inside args expecting them to execute.',
+    "For repobridge:run, put the complete shell command on the line after the directive marker.",
     "A repository has already been selected locally. Repository reads, searches, patches, Git operations, and relative paths are scoped to it. RepoBridge compatibility directives do not select or change the repository.",
     "Command execution starts in the task root but runs with the local OS user's permissions. Do not use commands to access unrelated filesystem locations.",
-    "A fenced code block containing a valid kavrith: directive is a live RepoBridge action, not documentation. Never emit a valid directive merely as an example, illustration, recap, or explanation. Only emit one when you intend RepoBridge to execute it in the current turn. When discussing directive syntax without intending execution, describe it in prose or use deliberately non-executable pseudocode.",
+    "A fenced code block containing a valid repobridge: directive is a live RepoBridge action, not documentation. Never emit a valid directive merely as an example, illustration, recap, or explanation. Only emit one when you intend RepoBridge to execute it in the current turn. When discussing directive syntax without intending execution, describe it in prose or use deliberately non-executable pseudocode.",
     "Emit at most one RepoBridge compatibility directive per assistant turn, only when repository work is needed. Do not emit one after the requested repository work is complete.",
     "Put the directive in one fenced code block with the directive marker as the first text. Put payloads on the following line.",
     "Accepted forms:",
-    '# kavrith:context\n{"searches":["query"],"reads":["README.md"],"searchesByName":[],"includeRepositoryMap":false,"maxChars":12000}',
-    "# kavrith:search\nQUERY",
-    "# kavrith:read relative/path startLine endLine",
+    '# repobridge:context\n{"searches":["query"],"reads":["README.md"],"searchesByName":[],"includeRepositoryMap":false,"maxChars":12000}',
+    "# repobridge:search\nQUERY",
+    "# repobridge:read relative/path startLine endLine",
     "or",
-    "# kavrith:read\nrelative/path\nstartLine\nendLine",
-    "# kavrith:patch\n*** Begin Patch\n...\n*** End Patch",
-    '# kavrith:exec\n{"executable":"git","args":["status","--short"]}',
-    "# kavrith:run\ncommand",
-    "# kavrith:git-status",
-    "# kavrith:git-diff",
-    "# kavrith:git-diff\nstaged",
+    "# repobridge:read\nrelative/path\nstartLine\nendLine",
+    "# repobridge:patch\n*** Begin Patch\n...\n*** End Patch",
+    '# repobridge:exec\n{"executable":"git","args":["status","--short"]}',
+    "# repobridge:run\ncommand",
+    "# repobridge:git-status",
+    "# repobridge:git-diff",
+    "# repobridge:git-diff\nstaged",
   ].join("\n");
 }
 
@@ -115,7 +115,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
 
   const panel = document.createElement("div");
   panel.hidden = true;
-  panel.dataset.kavrithPanel = "true";
+  panel.dataset.repobridgePanel = "true";
   panel.setAttribute("role", "dialog");
   panel.setAttribute("aria-label", "RepoBridge");
   panel.style.cssText = [
@@ -156,7 +156,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
   approvalLabel.style.cssText = "display:block;margin:4px 0;";
   const approval = document.createElement("input");
   approval.type = "radio";
-  approval.name = `kavrith-chat-access-${sessionId}`;
+  approval.name = `repobridge-chat-access-${sessionId}`;
   approval.value = "approval";
   approvalLabel.append(approval, " Ask before changes");
   approvalLabel.title =
@@ -166,7 +166,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
   fullLabel.style.cssText = "display:block;margin:4px 0 11px;";
   const full = document.createElement("input");
   full.type = "radio";
-  full.name = `kavrith-chat-access-${sessionId}`;
+  full.name = `repobridge-chat-access-${sessionId}`;
   full.value = "full";
   fullLabel.append(full, " Full access");
   fullLabel.title =
@@ -377,13 +377,13 @@ function createInitializer(sessionId: string): HTMLDivElement {
 }
 
 export function ensureChatInitializer(): void {
-  void syncKavrithSessionForCurrentPage().then(() => {
+  void syncRepoBridgeSessionForCurrentPage().then(() => {
     renderChatInitializer();
   });
 }
 
 function renderChatInitializer(): void {
-  const sessionId = kavrithSessionId();
+  const sessionId = repobridgeSessionId();
   const initializers = [
     ...document.querySelectorAll<HTMLElement>(`#${INITIALIZER_ID}`),
   ];
@@ -410,7 +410,7 @@ function renderChatInitializer(): void {
 
   const initializer = createInitializer(sessionId);
   document.body.append(initializer);
-  const panel = initializer.querySelector<HTMLElement>("[data-kavrith-panel]");
+  const panel = initializer.querySelector<HTMLElement>("[data-repobridge-panel]");
 
   let observedContainer: Element | undefined;
   const observer = new ResizeObserver(() => place());

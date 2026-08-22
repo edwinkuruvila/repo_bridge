@@ -25,7 +25,7 @@ elif [ -x /opt/homebrew/bin/node ]; then
 elif [ -x /usr/local/bin/node ]; then
   NODE_EXECUTABLE=/usr/local/bin/node
 else
-  echo "Kavrith local host could not find Node.js" >&2
+  echo "RepoBridge local host could not find Node.js" >&2
   exit 1
 fi
 

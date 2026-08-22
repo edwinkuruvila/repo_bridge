@@ -1,12 +1,12 @@
-export const SEARCH_MARKER = "# kavrith:search";
+export const SEARCH_MARKER = "# repobridge:search";
 
-export interface KavrithSearchRequest {
+export interface RepoBridgeSearchRequest {
   query: string;
 }
 
-export function parseKavrithSearch(
+export function parseRepoBridgeSearch(
   text: string,
-): KavrithSearchRequest | undefined {
+): RepoBridgeSearchRequest | undefined {
   const [firstLine, ...queryLines] = text.replace(/\r\n?/g, "\n").split("\n");
   if (firstLine !== SEARCH_MARKER) return undefined;
   const query = queryLines.join("\n").trim();
