@@ -147,7 +147,7 @@ export function errorMessage(cause: unknown): string {
 export function displayError(cause: unknown): string {
   const message = errorMessage(cause);
   if (message.includes("Receiving end does not exist")) {
-    return "Kavrith failed: extension background unavailable. Reload this ChatGPT tab after reloading the temporary extension.";
+    return "RepoBridge failed: extension background unavailable. Reload this ChatGPT tab after reloading the temporary extension.";
   }
-  return `Kavrith failed: ${message}`;
+  return `RepoBridge failed: ${message}`;
 }
