@@ -105,7 +105,7 @@ export async function sendToChatGPT(
     return {
       ok: false,
       message:
-        "ChatGPT composer contains a draft. Kavrith left it untouched; send the result after finishing your message.",
+        "ChatGPT composer contains a draft. RepoBridge left it untouched; send the result after finishing your message.",
     };
   }
 
@@ -143,7 +143,7 @@ export async function sendToChatGPT(
     );
   }
 
-  // Sending failed after Kavrith inserted the result. Roll back only if the
+  // Sending failed after RepoBridge inserted the result. Roll back only if the
   // composer still contains exactly our insertion; never overwrite user edits.
   if (
     composerRollbackDecision(original, result, composerText(composer)) ===
@@ -161,7 +161,7 @@ export async function sendToChatGPT(
     return {
       ok: false,
       message:
-        "Result queued — the composer changed before Kavrith could send it. Your draft was left untouched.",
+        "Result queued — the composer changed before RepoBridge could send it. Your draft was left untouched.",
     };
   }
 
