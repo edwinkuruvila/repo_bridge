@@ -1,16 +1,16 @@
-# Kavrith
+# RepoBridge
 
-Kavrith lets ChatGPT work with a local code repository from the ChatGPT web app.
+RepoBridge lets ChatGPT work with a local code repository from the ChatGPT web app.
 
-Instead of copying files and terminal output back and forth, Kavrith can read and search code, apply patches, run commands, inspect Git state, and send results back to the conversation. You choose the repository for each chat and decide whether changes need approval.
+Instead of copying files and terminal output back and forth, RepoBridge can read and search code, apply patches, run commands, inspect Git state, and send results back to the conversation. You choose the repository for each chat and decide whether changes need approval.
 
-Kavrith currently supports macOS with Firefox and Google Chrome.
+RepoBridge currently supports macOS with Firefox and Google Chrome.
 
-## What Kavrith does
+## What RepoBridge does
 
 - Searches repository contents and reads bounded file ranges.
 - Combines several searches and reads into one context request.
-- Applies repository-scoped patches and can undo Kavrith patches.
+- Applies repository-scoped patches and can undo RepoBridge patches.
 - Runs executables with literal arguments.
 - Runs shell commands when shell behavior is required.
 - Inspects Git status and staged or unstaged diffs.
@@ -20,7 +20,7 @@ Kavrith currently supports macOS with Firefox and Google Chrome.
 
 **Ask before changes** is the default. Inspection operations can run automatically. File edits, undo operations, and commands wait for your approval.
 
-**Full access** lets valid Kavrith directives in ChatGPT assistant messages edit files and run commands without confirmation.
+**Full access** lets valid RepoBridge directives in ChatGPT assistant messages edit files and run commands without confirmation.
 
 > [!WARNING]
 > Commands are not sandboxed to the selected repository. They start there, but they run with your normal user permissions. Use Full access only in chats you trust.
@@ -74,22 +74,8 @@ Then:
 3. Select `apps/extension/.output/firefox-mv2/manifest.json`.
 4. Restart Firefox.
 5. Open ChatGPT.
-6. Click **Kavrith** in the composer.
+6. Click **RepoBridge** in the composer.
 7. Choose a repository and an access mode.
-
-The host is installed at:
-
-```text
-macOS: ~/Library/Application Support/Kavrith/host
-Linux: $XDG_DATA_HOME/kavrith/host (default: ~/.local/share/kavrith/host)
-```
-
-Firefox reads its Native Messaging manifest from:
-
-```text
-macOS: ~/Library/Application Support/Mozilla/NativeMessagingHosts/com.kavrith.host.json
-Linux: ~/.mozilla/native-messaging-hosts/com.kavrith.host.json
-```
 
 ## Chrome
 
@@ -114,27 +100,18 @@ Then:
 
 7. Restart Chrome.
 8. Open ChatGPT.
-9. Click **Kavrith** in the composer.
+9. Click **RepoBridge** in the composer.
 10. Choose a repository and an access mode.
-
-Chrome reads its Native Messaging manifest from:
-
-```text
-macOS: ~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.kavrith.host.json
-Linux: $XDG_CONFIG_HOME/google-chrome/NativeMessagingHosts/com.kavrith.host.json (default: ~/.config/google-chrome/NativeMessagingHosts/com.kavrith.host.json)
-```
-
-The installer restricts the host to the supplied extension ID through `allowed_origins`.
 
 ## How it works
 
-Kavrith has three parts:
+RepoBridge has three parts:
 
-- `apps/extension` — integrates Kavrith with ChatGPT
+- `apps/extension` — integrates RepoBridge with ChatGPT
 - `apps/host` — performs local repository operations through Native Messaging
 - `packages/protocol` — defines the extension/host protocol
 
-The extension detects Kavrith directives in assistant responses and forwards validated requests to the local host. The host runs the operation against the repository selected for that conversation and returns a structured result.
+The extension detects RepoBridge directives in assistant responses and forwards validated requests to the local host. The host runs the operation against the repository selected for that conversation and returns a structured result.
 
 ## Operations
 
@@ -148,9 +125,13 @@ The extension detects Kavrith directives in assistant responses and forwards val
 | Run | Run shell command text |
 | Git status | Inspect repository status |
 | Git diff | Inspect staged or unstaged changes |
-| Undo | Restore a Kavrith patch checkpoint |
+| Undo | Restore a RepoBridge patch checkpoint |
 
-Kavrith directives are executable protocol messages. ChatGPT generates them as it works on the repository selected for the conversation.
+RepoBridge directives are executable protocol messages. ChatGPT generates them as it works on the repository selected for the conversation.
+
+## Compatibility note
+
+Some internal package names, native-host identifiers, storage keys, and installation paths still use the previous `kavrith` identifier. They are intentionally retained for compatibility and are not the public project name.
 
 ## Troubleshooting
 
@@ -178,8 +159,8 @@ Confirm that the native host is installed and reachable from the extension, then
 
 ## Status
 
-Kavrith is pre-1.0 software. The protocol and installation flow may change before a stable release.
+RepoBridge is pre-1.0 software. The protocol and installation flow may change before a stable release.
 
 ## License
 
-Kavrith is licensed under the [MIT License](LICENSE).
+RepoBridge is licensed under the [MIT License](LICENSE).
