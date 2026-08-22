@@ -30,12 +30,12 @@ function bootstrapMessage(initialization: InitializationPolicy): string {
     initialization.accessMode === "full" ? "Full access" : "Ask before changes";
 
   return [
-    "Kavrith gives you access to the repository selected for this ChatGPT conversation.",
-    "Kavrith is provided by a browser extension and local host; it is not a native ChatGPT tool and will not appear in your available tools. Invoke it by outputting one of the compatibility directives below in a fenced code block. These currently use the kavrith: protocol marker. The extension executes them locally and returns the result in the conversation. Do not look for or attempt to call a separate Kavrith tool.",
+    "RepoBridge gives you access to the repository selected for this ChatGPT conversation.",
+    "RepoBridge is provided by a browser extension and local host; it is not a native ChatGPT tool and will not appear in your available tools. Invoke it by outputting one of the compatibility directives below in a fenced code block. These currently use the kavrith: protocol marker. The extension executes them locally and returns the result in the conversation. Do not look for or attempt to call a separate RepoBridge tool.",
     `Access policy: ${access}.`,
-    "Use Kavrith for repository work instead of asking the user to paste files or run commands for you.",
-    "When the user requests repository inspection or modification, issue the appropriate Kavrith compatibility directive instead of only describing what you plan to do.",
-    "Kavrith supports repository inspection, code navigation, file reading, file modification, command execution, and Git inspection.",
+    "Use RepoBridge for repository work instead of asking the user to paste files or run commands for you.",
+    "When the user requests repository inspection or modification, issue the appropriate RepoBridge compatibility directive instead of only describing what you plan to do.",
+    "RepoBridge supports repository inspection, code navigation, file reading, file modification, command execution, and Git inspection.",
     "Use inspection directives to gather repository evidence before answering questions that depend on repository contents. Use modification or command directives when the task requires changing or executing something.",
     "Choose directives by capability:",
     "- kavrith:context combines multiple repository searches, file reads, name-based repository searches, and an optional repository map into one inspection request.",
@@ -51,10 +51,10 @@ function bootstrapMessage(initialization: InitializationPolicy): string {
     'For kavrith:context, searches and reads are optional and default to empty arrays. reads may be path strings (default lines 1-500) or objects such as {"path":"src/index.ts","startLine":1,"endLine":200}. Limits: at most 8 searches, 16 reads, and 16 searchesByName entries. maxChars must be between 1000 and 100000. At least one search, read, searchesByName entry, or includeRepositoryMap=true is required.',
     'For kavrith:exec, put JSON on the line after the directive marker, for example {"executable":"git","args":["status","--short"]}. Do not place shell operators inside args expecting them to execute.',
     "For kavrith:run, put the complete shell command on the line after the directive marker.",
-    "A repository has already been selected locally. Repository reads, searches, patches, Git operations, and relative paths are scoped to it. Kavrith compatibility directives do not select or change the repository.",
+    "A repository has already been selected locally. Repository reads, searches, patches, Git operations, and relative paths are scoped to it. RepoBridge compatibility directives do not select or change the repository.",
     "Command execution starts in the task root but runs with the local OS user's permissions. Do not use commands to access unrelated filesystem locations.",
-    "A fenced code block containing a valid kavrith: directive is a live Kavrith action, not documentation. Never emit a valid directive merely as an example, illustration, recap, or explanation. Only emit one when you intend Kavrith to execute it in the current turn. When discussing directive syntax without intending execution, describe it in prose or use deliberately non-executable pseudocode.",
-    "Emit at most one Kavrith compatibility directive per assistant turn, only when repository work is needed. Do not emit one after the requested repository work is complete.",
+    "A fenced code block containing a valid kavrith: directive is a live RepoBridge action, not documentation. Never emit a valid directive merely as an example, illustration, recap, or explanation. Only emit one when you intend RepoBridge to execute it in the current turn. When discussing directive syntax without intending execution, describe it in prose or use deliberately non-executable pseudocode.",
+    "Emit at most one RepoBridge compatibility directive per assistant turn, only when repository work is needed. Do not emit one after the requested repository work is complete.",
     "Put the directive in one fenced code block with the directive marker as the first text. Put payloads on the following line.",
     "Accepted forms:",
     '# kavrith:context\n{"searches":["query"],"reads":["README.md"],"searchesByName":[],"includeRepositoryMap":false,"maxChars":12000}',
@@ -107,7 +107,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
     }
   `;
 
-  const badge = button("Kavrith");
+  const badge = button("RepoBridge");
   badge.style.display = "inline-flex";
   badge.style.alignItems = "center";
   badge.setAttribute("aria-haspopup", "dialog");
@@ -117,7 +117,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
   panel.hidden = true;
   panel.dataset.kavrithPanel = "true";
   panel.setAttribute("role", "dialog");
-  panel.setAttribute("aria-label", "Kavrith");
+  panel.setAttribute("aria-label", "RepoBridge");
   panel.style.cssText = [
     "position:absolute",
     "left:0",
@@ -224,7 +224,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
 
       if (initialization) {
         initialized = true;
-        badge.title = "Kavrith active";
+        badge.title = "RepoBridge active";
         approval.checked = initialization.accessMode === "approval";
         full.checked = initialization.accessMode === "full";
         selectedAccessMode = initialization.accessMode;
@@ -236,7 +236,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
         chooseRoot.textContent = "Change";
       } else {
         initialized = false;
-        badge.title = "Kavrith ready";
+        badge.title = "RepoBridge ready";
         approval.checked = defaults.accessMode === "approval";
         full.checked = defaults.accessMode === "full";
         selectedAccessMode = defaults.accessMode;
