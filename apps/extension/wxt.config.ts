@@ -2,13 +2,14 @@ import { defineConfig } from "wxt";
 
 export default defineConfig({
   manifest: {
-    name: "Kavrith",
+    name: "RepoBridge",
     description:
       "Connect ChatGPT to local code repositories with explicit access controls.",
     version: "0.1.0",
     permissions: ["nativeMessaging", "storage"],
     browser_specific_settings: {
       gecko: {
+        // Retained for compatibility with existing native-host registrations.
         id: "kavrith@localhost",
         data_collection_permissions: {
           required: ["websiteContent"],

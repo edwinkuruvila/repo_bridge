@@ -2,13 +2,13 @@
 
 ## Supported versions
 
-Kavrith is pre-1.0. Security fixes are made against the latest version on the default branch.
+RepoBridge is pre-1.0. Security fixes are made against the latest version on the default branch.
 
 ## Reporting a vulnerability
 
 Do not open a public issue for a security vulnerability.
 
-Use **Report a vulnerability** on the repository's **Security** tab. Kavrith uses GitHub Private Vulnerability Reporting so technical details stay private while the report is investigated and fixed.
+Use **Report a vulnerability** on the repository's **Security** tab. RepoBridge uses GitHub Private Vulnerability Reporting so technical details stay private while the report is investigated and fixed.
 
 If private vulnerability reporting is not available, do not post vulnerability details publicly. Open a non-sensitive issue asking for a private reporting channel.
 
@@ -16,7 +16,7 @@ Security reports will be acknowledged within 14 days.
 
 A useful report includes:
 
-- the affected Kavrith version or commit
+- the affected RepoBridge version or commit
 - browser and browser version
 - access mode used
 - clear reproduction steps
@@ -28,7 +28,7 @@ Do not include unrelated repository contents, credentials, tokens, or other priv
 
 ## Security boundaries
 
-Kavrith connects a ChatGPT browser session to a local Native Messaging host. The host can read and modify the selected repository and can run local commands.
+RepoBridge connects a ChatGPT browser session to a local Native Messaging host. The host can read and modify the selected repository and can run local commands.
 
 The boundaries below are intentional parts of the design.
 
@@ -36,7 +36,7 @@ The boundaries below are intentional parts of the design.
 
 You select a repository through the operating-system folder picker for each ChatGPT conversation.
 
-Kavrith file reads and patches canonicalize paths before access. They reject absolute-path traversal, parent traversal, and symlink escapes outside the selected repository.
+RepoBridge file reads and patches canonicalize paths before access. They reject absolute-path traversal, parent traversal, and symlink escapes outside the selected repository.
 
 A bypass of these checks is a security issue.
 
@@ -44,13 +44,13 @@ A bypass of these checks is a security issue.
 
 In **Ask before changes**, inspection operations can run automatically. File changes, undo operations, and commands require a trusted browser user gesture.
 
-Kavrith rejects synthetic approval, rejection, undo, repository-selection, and access-mode events.
+RepoBridge rejects synthetic approval, rejection, undo, repository-selection, and access-mode events.
 
 A way to trigger a protected mutation without a trusted user gesture is a security issue.
 
 ### Full access
 
-In **Full access**, valid Kavrith mutation directives rendered in ChatGPT assistant messages can run without confirmation.
+In **Full access**, valid RepoBridge mutation directives rendered in ChatGPT assistant messages can run without confirmation.
 
 This mode trusts the rendered assistant content. If another extension, injected page code, or a compromised page can alter that content, it may be able to cause local mutations while Full access is enabled.
 
@@ -70,7 +70,7 @@ A command doing this after explicit approval, or under Full access, is expected 
 
 The native host is restricted through the browser native-host allow list.
 
-Firefox allows the Kavrith extension ID `kavrith@localhost`. Chrome installation writes an `allowed_origins` entry for the exact extension ID supplied during host registration.
+Firefox currently retains the legacy extension ID `kavrith@localhost` for compatibility. Chrome installation writes an `allowed_origins` entry for the exact extension ID supplied during host registration.
 
 The host validates request framing, request IDs, protocol version, method names, and method-specific input before dispatch.
 
@@ -82,17 +82,17 @@ Treat repository contents and command output as untrusted input.
 
 A repository can contain text intended to influence the language model into proposing unsafe operations. When working with untrusted code, use **Ask before changes** and review mutations before approving them.
 
-Kavrith does not execute directive-looking text merely because it appears in a repository file or command output. Execution requires a valid directive to appear later as an assistant directive and pass the configured access policy.
+RepoBridge does not execute directive-looking text merely because it appears in a repository file or command output. Execution requires a valid directive to appear later as an assistant directive and pass the configured access policy.
 
 ### Local state
 
-Kavrith stores local task metadata and patch checkpoints. Checkpoints may contain previous file contents needed for undo.
+RepoBridge stores local task metadata and patch checkpoints. Checkpoints may contain previous file contents needed for undo.
 
 This state stays local and uses restrictive filesystem permissions where supported.
 
 ## What to report
 
-Report issues that can cause any of the following without the access required by Kavrith's documented trust model:
+Report issues that can cause any of the following without the access required by RepoBridge's documented trust model:
 
 - reading or modifying files outside the selected repository through repository file APIs
 - executing a protected mutation without a trusted approval gesture in **Ask before changes**
