@@ -11,9 +11,12 @@ test("accepts one-line read form", () => {
 });
 
 test("accepts multiline read form", () => {
-  assert.deepEqual(parseRepoBridgeRead("# repobridge:read\nREADME.md\n1\n100"), {
-    path: "README.md",
-    startLine: 1,
-    endLine: 100,
-  });
+  assert.deepEqual(
+    parseRepoBridgeRead("# repobridge:read\nREADME.md\n1\n100"),
+    {
+      path: "README.md",
+      startLine: 1,
+      endLine: 100,
+    },
+  );
 });

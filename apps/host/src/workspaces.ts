@@ -2,7 +2,8 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 export function configPath(): string {
-  if (process.env.REPOBRIDGE_CONFIG_PATH) return process.env.REPOBRIDGE_CONFIG_PATH;
+  if (process.env.REPOBRIDGE_CONFIG_PATH)
+    return process.env.REPOBRIDGE_CONFIG_PATH;
   return join(
     homedir(),
     "Library",

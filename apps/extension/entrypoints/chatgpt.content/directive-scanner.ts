@@ -7,7 +7,10 @@ import {
   parseRepoBridgeExec,
   type RepoBridgeExecRequest,
 } from "../../lib/chatgpt-exec";
-import { parseRepoBridgeGit, type RepoBridgeGitRequest } from "../../lib/chatgpt-git";
+import {
+  parseRepoBridgeGit,
+  type RepoBridgeGitRequest,
+} from "../../lib/chatgpt-git";
 import {
   parseRepoBridgePatch,
   type RepoBridgePatchRequest,
@@ -16,7 +19,10 @@ import {
   parseRepoBridgeRead,
   type RepoBridgeReadRequest,
 } from "../../lib/chatgpt-read";
-import { parseRepoBridgeRun, type RepoBridgeRunRequest } from "../../lib/chatgpt-run";
+import {
+  parseRepoBridgeRun,
+  type RepoBridgeRunRequest,
+} from "../../lib/chatgpt-run";
 import {
   parseRepoBridgeSearch,
   type RepoBridgeSearchRequest,

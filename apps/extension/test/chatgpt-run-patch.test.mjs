@@ -5,7 +5,9 @@ import { parseRepoBridgePatch } from "../dist-test/lib/chatgpt-patch.js";
 
 test("preserves multiline run commands", () => {
   assert.deepEqual(
-    parseRepoBridgeRun("# repobridge:run\nset -e\nprintf 'one\\n'\nprintf 'two\\n'"),
+    parseRepoBridgeRun(
+      "# repobridge:run\nset -e\nprintf 'one\\n'\nprintf 'two\\n'",
+    ),
     { command: "set -e\nprintf 'one\\n'\nprintf 'two\\n'" },
   );
 });
@@ -19,5 +21,7 @@ test("accepts RepoBridge patch envelopes containing standard unified hunk header
     "+new",
     "*** End Patch",
   ].join("\n");
-  assert.deepEqual(parseRepoBridgePatch(`# repobridge:patch\n${patch}`), { patch });
+  assert.deepEqual(parseRepoBridgePatch(`# repobridge:patch\n${patch}`), {
+    patch,
+  });
 });

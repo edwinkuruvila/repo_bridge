@@ -22,12 +22,22 @@ test("directive occurrence ids distinguish repeated directives", () => {
 test("streamed text keeps one directive occurrence id", () => {
   assert.equal(
     directiveOccurrenceId(3, 0, "run", "# repobridge:run\necho par"),
-    directiveOccurrenceId(3, 0, "run", "# repobridge:run\necho partial complete"),
+    directiveOccurrenceId(
+      3,
+      0,
+      "run",
+      "# repobridge:run\necho partial complete",
+    ),
   );
 });
 
 test("streamed startup directives keep one occurrence until generation completes", () => {
-  const partial = directiveOccurrenceId(5, 0, "invalid-run", "# repobridge:run");
+  const partial = directiveOccurrenceId(
+    5,
+    0,
+    "invalid-run",
+    "# repobridge:run",
+  );
   const complete = directiveOccurrenceId(
     5,
     0,

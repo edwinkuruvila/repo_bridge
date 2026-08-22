@@ -60,7 +60,8 @@ export function isRepoBridgeSearchMessage(
   if (typeof message !== "object" || message === null) return false;
   const candidate = message as Partial<RepoBridgeSearchMessage>;
   return (
-    candidate.type === "REPOBRIDGE_SEARCH" && typeof candidate.query === "string"
+    candidate.type === "REPOBRIDGE_SEARCH" &&
+    typeof candidate.query === "string"
   );
 }
 

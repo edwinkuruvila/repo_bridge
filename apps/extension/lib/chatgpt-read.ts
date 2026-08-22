@@ -20,7 +20,9 @@ function buildReadRequest(
     : undefined;
 }
 
-export function parseRepoBridgeRead(text: string): RepoBridgeReadRequest | undefined {
+export function parseRepoBridgeRead(
+  text: string,
+): RepoBridgeReadRequest | undefined {
   const normalized = text.replace(/\r\n?/g, "\n").trim();
 
   const oneLine = normalized.match(

@@ -189,7 +189,9 @@ export async function restoreQueuedResults(): Promise<void> {
     const text = fullDirectiveCodeText(pre);
     if (!code || text === undefined) continue;
     const directive = parseDirective(text);
-    const parseError = directive ? undefined : repobridgeDirectiveParseError(text);
+    const parseError = directive
+      ? undefined
+      : repobridgeDirectiveParseError(text);
     const identity = directive
       ? directiveId(code, directive.type, text)
       : parseError

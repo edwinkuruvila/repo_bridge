@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import { repobridgeDirectiveParseError } from "../dist-test/lib/chatgpt-directive-error.js";
 
 test("reports malformed read directives with accepted forms", () => {
-  const error = repobridgeDirectiveParseError("# repobridge:read README.md nope 180");
+  const error = repobridgeDirectiveParseError(
+    "# repobridge:read README.md nope 180",
+  );
   assert.equal(error?.type, "read");
   assert.match(error?.message ?? "", /Accepted forms/i);
 });
@@ -51,7 +53,9 @@ test("reports malformed exec and run directives", () => {
 });
 
 test("reports malformed git and search directives", () => {
-  const status = repobridgeDirectiveParseError("# repobridge:git-status\nextra");
+  const status = repobridgeDirectiveParseError(
+    "# repobridge:git-status\nextra",
+  );
   assert.equal(status?.type, "git-status");
 
   const diff = repobridgeDirectiveParseError("# repobridge:git-diff\nunstaged");
@@ -68,5 +72,8 @@ test("does not classify unrelated code as malformed RepoBridge syntax", () => {
     repobridgeDirectiveParseError("# repobridge:reader\nREADME.md\n1\n10"),
     undefined,
   );
-  assert.equal(repobridgeDirectiveParseError("console.log('hello')"), undefined);
+  assert.equal(
+    repobridgeDirectiveParseError("console.log('hello')"),
+    undefined,
+  );
 });

@@ -3,7 +3,8 @@ import { conversationSessionIdFromUrl } from "./conversation-session";
 
 const REPOBRIDGE_SESSION_ID_SESSION_KEY = "repobridgeSessionId";
 const REPOBRIDGE_CONVERSATION_SESSION_KEY = "repobridgeConversationSessionId";
-const REPOBRIDGE_CONVERSATION_ALIASES_STORAGE_KEY = "repobridgeConversationAliases";
+const REPOBRIDGE_CONVERSATION_ALIASES_STORAGE_KEY =
+  "repobridgeConversationAliases";
 
 type ConversationAliases = Record<string, string>;
 

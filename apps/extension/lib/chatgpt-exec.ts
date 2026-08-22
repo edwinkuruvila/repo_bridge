@@ -7,7 +7,9 @@ const MAX_EXECUTABLE_LENGTH = 1_000;
 const MAX_ARGS = 256;
 const MAX_ARG_LENGTH = 8_000;
 
-export function parseRepoBridgeExec(text: string): RepoBridgeExecRequest | undefined {
+export function parseRepoBridgeExec(
+  text: string,
+): RepoBridgeExecRequest | undefined {
   const normalized = text.replace(/\r\n?/g, "\n");
   const match = normalized.match(/^# repobridge:exec(?:\n|[ \t]+)([\s\S]*)$/);
   if (!match) return undefined;

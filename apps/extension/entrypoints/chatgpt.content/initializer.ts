@@ -410,7 +410,9 @@ function renderChatInitializer(): void {
 
   const initializer = createInitializer(sessionId);
   document.body.append(initializer);
-  const panel = initializer.querySelector<HTMLElement>("[data-repobridge-panel]");
+  const panel = initializer.querySelector<HTMLElement>(
+    "[data-repobridge-panel]",
+  );
 
   let observedContainer: Element | undefined;
   const observer = new ResizeObserver(() => place());
