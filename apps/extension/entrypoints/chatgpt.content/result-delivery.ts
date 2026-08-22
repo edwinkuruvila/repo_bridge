@@ -5,7 +5,7 @@ import {
   type ResultOutboxByChat,
 } from "../../lib/result-outbox";
 import { createAsyncMutationQueue } from "../../lib/async-mutation-queue";
-import { kavrithSessionId } from "../../lib/kavrith-session";
+import { repobridgeSessionId } from "../../lib/repobridge-session";
 import { sendToChatGPT } from "./composer";
 import { createActionButton, errorMessage } from "./result-ui";
 
@@ -22,7 +22,7 @@ export async function getOutbox(): Promise<ResultOutboxByChat> {
 
 async function queueResult(identity: string, result: string): Promise<void> {
   await mutateOutbox(async () => {
-    const sessionId = kavrithSessionId();
+    const sessionId = repobridgeSessionId();
     await browser.storage.local.set({
       [RESULT_OUTBOX_STORAGE_KEY]: enqueueResult(
         await getOutbox(),
@@ -36,7 +36,7 @@ async function queueResult(identity: string, result: string): Promise<void> {
 
 async function clearQueuedResult(identity: string): Promise<void> {
   await mutateOutbox(async () => {
-    const sessionId = kavrithSessionId();
+    const sessionId = repobridgeSessionId();
     await browser.storage.local.set({
       [RESULT_OUTBOX_STORAGE_KEY]: removeResult(
         await getOutbox(),
@@ -93,18 +93,18 @@ export async function returnResultToChatGPT(
   controls.append(status);
 }
 
-function formatKavrithError(
+function formatRepoBridgeError(
   operation: string,
   cause: unknown,
   workspaceName?: string,
 ): string {
   const message = errorMessage(cause);
   return [
-    "<kavrith_error>",
+    "<repobridge_error>",
     ...(workspaceName ? [`workspace: ${workspaceName}`] : []),
     `operation: ${operation}`,
     `message: ${message}`,
-    "</kavrith_error>",
+    "</repobridge_error>",
   ].join("\n");
 }
 
@@ -118,6 +118,6 @@ export async function returnErrorToChatGPT(
   await returnResultToChatGPT(
     controls,
     identity,
-    formatKavrithError(operation, cause, workspaceName),
+    formatRepoBridgeError(operation, cause, workspaceName),
   );
 }

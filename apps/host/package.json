@@ -1,5 +1,5 @@
 {
-  "name": "@kavrith/host",
+  "name": "@repobridge/host",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "test": "pnpm build && node --test dist/**/*.test.js"
   },
   "dependencies": {
-    "@kavrith/protocol": "workspace:*"
+    "@repobridge/protocol": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.2.1",

@@ -1,16 +1,18 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseKavrithRun } from "../dist-test/lib/chatgpt-run.js";
-import { parseKavrithPatch } from "../dist-test/lib/chatgpt-patch.js";
+import { parseRepoBridgeRun } from "../dist-test/lib/chatgpt-run.js";
+import { parseRepoBridgePatch } from "../dist-test/lib/chatgpt-patch.js";
 
 test("preserves multiline run commands", () => {
   assert.deepEqual(
-    parseKavrithRun("# kavrith:run\nset -e\nprintf 'one\\n'\nprintf 'two\\n'"),
+    parseRepoBridgeRun(
+      "# repobridge:run\nset -e\nprintf 'one\\n'\nprintf 'two\\n'",
+    ),
     { command: "set -e\nprintf 'one\\n'\nprintf 'two\\n'" },
   );
 });
 
-test("accepts Kavrith patch envelopes containing standard unified hunk headers", () => {
+test("accepts RepoBridge patch envelopes containing standard unified hunk headers", () => {
   const patch = [
     "*** Begin Patch",
     "*** Update File: README.md",
@@ -19,5 +21,7 @@ test("accepts Kavrith patch envelopes containing standard unified hunk headers",
     "+new",
     "*** End Patch",
   ].join("\n");
-  assert.deepEqual(parseKavrithPatch(`# kavrith:patch\n${patch}`), { patch });
+  assert.deepEqual(parseRepoBridgePatch(`# repobridge:patch\n${patch}`), {
+    patch,
+  });
 });

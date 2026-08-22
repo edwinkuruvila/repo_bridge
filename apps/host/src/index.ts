@@ -20,7 +20,7 @@ process.stdin.on("data", (chunk: Buffer) => {
                 ? (request as { id?: unknown }).id
                 : undefined;
             const id = typeof requestId === "string" ? requestId : "unknown";
-            console.error(`Kavrith local host handler error: ${message}`);
+            console.error(`RepoBridge local host handler error: ${message}`);
             process.stdout.write(
               encodeMessage({
                 version: 1,
@@ -37,12 +37,12 @@ process.stdin.on("data", (chunk: Buffer) => {
         .catch((cause: unknown) => {
           const message =
             cause instanceof Error ? cause.message : String(cause);
-          console.error(`Kavrith local host handler error: ${message}`);
+          console.error(`RepoBridge local host handler error: ${message}`);
         });
     }
   } catch (cause) {
     const message = cause instanceof Error ? cause.message : String(cause);
-    console.error(`Kavrith local host input error: ${message}`);
+    console.error(`RepoBridge local host input error: ${message}`);
     process.stdout.write(
       encodeMessage({
         version: 1,
@@ -55,5 +55,5 @@ process.stdin.on("data", (chunk: Buffer) => {
 });
 
 process.stdin.on("error", (cause) => {
-  console.error(`Kavrith local host stdin error: ${cause.message}`);
+  console.error(`RepoBridge local host stdin error: ${cause.message}`);
 });

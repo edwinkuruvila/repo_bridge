@@ -1,17 +1,17 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseKavrithContext } from "../dist-test/lib/chatgpt-context.js";
+import { parseRepoBridgeContext } from "../dist-test/lib/chatgpt-context.js";
 
 test("context parser accepts canonical string searches", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searches":["handled"],"reads":[]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searches":["handled"],"reads":[]}',
   );
   assert.deepEqual(parsed?.searches, ["handled"]);
 });
 
 test("context parser defaults omitted reads to an empty array", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searches":["handled"]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searches":["handled"]}',
   );
   assert.deepEqual(parsed, {
     searches: ["handled"],
@@ -20,8 +20,8 @@ test("context parser defaults omitted reads to an empty array", () => {
 });
 
 test("context parser defaults omitted searches to an empty array", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"reads":["README.md"]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"reads":["README.md"]}',
   );
   assert.deepEqual(parsed, {
     searches: [],
@@ -30,8 +30,8 @@ test("context parser defaults omitted searches to an empty array", () => {
 });
 
 test("context parser accepts a name-search-only request", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searchesByName":["NativeMessage"]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searchesByName":["NativeMessage"]}',
   );
   assert.deepEqual(parsed, {
     searches: [],
@@ -41,8 +41,8 @@ test("context parser accepts a name-search-only request", () => {
 });
 
 test("context parser accepts a repository-map-only request", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"includeRepositoryMap":true}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"includeRepositoryMap":true}',
   );
   assert.deepEqual(parsed, {
     searches: [],
@@ -52,29 +52,29 @@ test("context parser accepts a repository-map-only request", () => {
 });
 
 test("context parser normalizes query-shaped searches", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searches":[{"query":"handled"},{"q":"mutation"}],"reads":[]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searches":[{"query":"handled"},{"q":"mutation"}],"reads":[]}',
   );
   assert.deepEqual(parsed?.searches, ["handled", "mutation"]);
 });
 
 test("context parser rejects malformed search objects", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searches":[{"term":"handled"}],"reads":[]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searches":[{"term":"handled"}],"reads":[]}',
   );
   assert.equal(parsed, undefined);
 });
 
 test("context parser accepts a 500-line read range", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searches":[],"reads":[{"path":"source.txt","startLine":1,"endLine":500}]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searches":[],"reads":[{"path":"source.txt","startLine":1,"endLine":500}]}',
   );
   assert.equal(parsed?.reads[0]?.endLine, 500);
 });
 
 test("context parser normalizes string reads to the bounded default range", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searches":[],"reads":["README.md","package.json"]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searches":[],"reads":["README.md","package.json"]}',
   );
   assert.deepEqual(parsed?.reads, [
     { path: "README.md", startLine: 1, endLine: 500 },
@@ -83,15 +83,15 @@ test("context parser normalizes string reads to the bounded default range", () =
 });
 
 test("context parser lets oversized ranges reach host validation", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searches":[],"reads":[{"path":"source.txt","startLine":1,"endLine":501}]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searches":[],"reads":[{"path":"source.txt","startLine":1,"endLine":501}]}',
   );
   assert.equal(parsed?.reads[0]?.endLine, 501);
 });
 
 test("context parser accepts canonical name searches", () => {
-  const parsed = parseKavrithContext(
-    '# kavrith:context\n{"searches":[],"reads":[],"searchesByName":["NativeMessage"]}',
+  const parsed = parseRepoBridgeContext(
+    '# repobridge:context\n{"searches":[],"reads":[],"searchesByName":["NativeMessage"]}',
   );
   assert.deepEqual(parsed, {
     searches: [],

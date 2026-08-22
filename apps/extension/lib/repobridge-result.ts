@@ -1,9 +1,9 @@
 import type {
   InspectionReadResponse,
   InspectionSearchResponse,
-} from "@kavrith/protocol";
+} from "@repobridge/protocol";
 
-export function formatKavrithResult(
+export function formatRepoBridgeResult(
   workspaceName: string,
   query: string,
   response: InspectionSearchResponse,
@@ -11,7 +11,7 @@ export function formatKavrithResult(
   const result = response.result;
   const stderr = result.stderr ? `\n\nstderr:\n${result.stderr}` : "";
   return [
-    "<kavrith_result>",
+    "<repobridge_result>",
     `workspace: ${workspaceName}`,
     "operation: inspection.search",
     `query: ${query}`,
@@ -20,17 +20,17 @@ export function formatKavrithResult(
     `truncated: ${result.truncated}`,
     "",
     `stdout:\n${result.stdout}${stderr}`,
-    "</kavrith_result>",
+    "</repobridge_result>",
   ].join("\n");
 }
 
-export function formatKavrithReadResult(
+export function formatRepoBridgeReadResult(
   workspaceName: string,
   response: InspectionReadResponse,
 ): string {
   const result = response.result;
   return [
-    "<kavrith_result>",
+    "<repobridge_result>",
     `workspace: ${workspaceName}`,
     "operation: inspection.read",
     `path: ${result.path}`,
@@ -38,6 +38,6 @@ export function formatKavrithReadResult(
     `truncated: ${result.truncated}`,
     "",
     `content:\n${result.content}`,
-    "</kavrith_result>",
+    "</repobridge_result>",
   ].join("\n");
 }

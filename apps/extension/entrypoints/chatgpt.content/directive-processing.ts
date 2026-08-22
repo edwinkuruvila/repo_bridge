@@ -1,5 +1,5 @@
 import { getChatInitialization } from "../../lib/chat-initialization";
-import { kavrithSessionId } from "../../lib/kavrith-session";
+import { repobridgeSessionId } from "../../lib/repobridge-session";
 import { createControls } from "./result-ui";
 import {
   directiveId,
@@ -30,14 +30,14 @@ import {
   isUnprocessedCodeBlock,
   preferredDirectiveCodeText,
 } from "../../lib/chatgpt-code-block";
-import { kavrithDirectiveParseError } from "../../lib/chatgpt-directive-error";
+import { repobridgeDirectiveParseError } from "../../lib/chatgpt-directive-error";
 
-const PROCESSED_ATTRIBUTE = "data-kavrith-action";
-const CLAIMING_ATTRIBUTE = "data-kavrith-claiming";
+const PROCESSED_ATTRIBUTE = "data-repobridge-action";
+const CLAIMING_ATTRIBUTE = "data-repobridge-claiming";
 const ASSISTANT_CODE_SELECTOR = "[data-message-author-role='assistant'] pre";
-const CODE_TEXT_REQUEST_EVENT = "kavrith:code-text-request";
-const CODE_TEXT_RESPONSE_EVENT = "kavrith:code-text-response";
-const CODE_READER_ID_ATTRIBUTE = "data-kavrith-code-reader-id";
+const CODE_TEXT_REQUEST_EVENT = "repobridge:code-text-request";
+const CODE_TEXT_RESPONSE_EVENT = "repobridge:code-text-response";
+const CODE_READER_ID_ATTRIBUTE = "data-repobridge-code-reader-id";
 const renderedActions = new WeakMap<HTMLElement, HTMLElement[]>();
 const claimedMalformedDirectives = new Set<string>();
 
@@ -127,7 +127,7 @@ async function handleMalformedDirective(
   code: HTMLElement,
   text: string,
 ): Promise<boolean> {
-  const parseError = kavrithDirectiveParseError(text);
+  const parseError = repobridgeDirectiveParseError(text);
   if (!parseError) return false;
 
   const identity = directiveId(code, `invalid-${parseError.type}`, text);
@@ -158,10 +158,10 @@ async function handleMalformedDirective(
 
   if (identity) {
     const result = [
-      "<kavrith_error>",
+      "<repobridge_error>",
       `operation: directive.parse.${parseError.type}`,
       `message: ${parseError.message}`,
-      "</kavrith_error>",
+      "</repobridge_error>",
     ].join("\n");
     void returnResultToChatGPT(controls, identity, result);
   }
@@ -170,15 +170,15 @@ async function handleMalformedDirective(
 }
 
 async function currentTaskRoot(): Promise<string> {
-  const sessionId = kavrithSessionId();
+  const sessionId = repobridgeSessionId();
   const initialization = await getChatInitialization(sessionId);
   if (!initialization)
-    throw new Error("Kavrith is not initialized for this chat");
+    throw new Error("RepoBridge is not initialized for this chat");
   return initialization.rootPath;
 }
 
 export async function restoreQueuedResults(): Promise<void> {
-  const sessionId = kavrithSessionId();
+  const sessionId = repobridgeSessionId();
   const outbox = await getOutbox();
   const entries = Object.values(outbox[sessionId] ?? {});
   if (entries.length === 0) return;
@@ -189,7 +189,9 @@ export async function restoreQueuedResults(): Promise<void> {
     const text = fullDirectiveCodeText(pre);
     if (!code || text === undefined) continue;
     const directive = parseDirective(text);
-    const parseError = directive ? undefined : kavrithDirectiveParseError(text);
+    const parseError = directive
+      ? undefined
+      : repobridgeDirectiveParseError(text);
     const identity = directive
       ? directiveId(code, directive.type, text)
       : parseError
@@ -202,7 +204,7 @@ export async function restoreQueuedResults(): Promise<void> {
     const controls = createControls();
     addComposerAction(controls, identity, queued.result);
     const status = document.createElement("span");
-    status.textContent = "Kavrith result is queued for delivery.";
+    status.textContent = "RepoBridge result is queued for delivery.";
     status.style.cssText = "font:12px system-ui,sans-serif;color:#7f1d1d;";
     controls.append(status);
     pre.append(controls);

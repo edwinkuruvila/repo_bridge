@@ -9,7 +9,7 @@ export function conversationSessionIdFromUrl(
 
     // ChatGPT can briefly navigate new chats through a provisional
     // /c/WEB:<uuid> route before replacing it with the persisted
-    // conversation id. Never bind Kavrith state to that transient id.
+    // conversation id. Never bind RepoBridge state to that transient id.
     if (sessionId.startsWith("/c/WEB:")) return undefined;
 
     return sessionId;

@@ -1,12 +1,12 @@
-export interface KavrithPatchRequest {
+export interface RepoBridgePatchRequest {
   patch: string;
 }
 
-export function parseKavrithPatch(
+export function parseRepoBridgePatch(
   text: string,
-): KavrithPatchRequest | undefined {
+): RepoBridgePatchRequest | undefined {
   const normalized = text.replace(/\r\n?/g, "\n");
-  const prefix = "# kavrith:patch\n";
+  const prefix = "# repobridge:patch\n";
   if (!normalized.startsWith(prefix)) return undefined;
   const patch = normalized.slice(prefix.length).trimEnd();
   return patch.startsWith("*** Begin Patch\n") &&

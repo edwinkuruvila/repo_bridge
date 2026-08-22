@@ -70,7 +70,7 @@ A command doing this after explicit approval, or under Full access, is expected 
 
 The native host is restricted through the browser native-host allow list.
 
-Firefox currently retains the legacy extension ID `kavrith@localhost` for compatibility. Chrome installation writes an `allowed_origins` entry for the exact extension ID supplied during host registration.
+Firefox uses the extension ID `repobridge@localhost`. Chrome installation writes an `allowed_origins` entry for the exact extension ID supplied during host registration.
 
 The host validates request framing, request IDs, protocol version, method names, and method-specific input before dispatch.
 

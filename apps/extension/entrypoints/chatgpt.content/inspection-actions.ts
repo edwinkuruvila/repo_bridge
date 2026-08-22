@@ -1,11 +1,11 @@
-import type { KavrithContextRequest } from "../../lib/chatgpt-context";
-import type { KavrithSearchRequest } from "../../lib/chatgpt-search";
+import type { RepoBridgeContextRequest } from "../../lib/chatgpt-context";
+import type { RepoBridgeSearchRequest } from "../../lib/chatgpt-search";
 import {
-  formatKavrithReadResult,
-  formatKavrithResult,
-} from "../../lib/kavrith-result";
-import { sendKavrithMessage } from "../../lib/background-client";
-import { kavrithSessionId } from "../../lib/kavrith-session";
+  formatRepoBridgeReadResult,
+  formatRepoBridgeResult,
+} from "../../lib/repobridge-result";
+import { sendRepoBridgeMessage } from "../../lib/background-client";
+import { repobridgeSessionId } from "../../lib/repobridge-session";
 import { setDirectiveState } from "./directive-scanner";
 import { enqueueAutomaticOperation } from "./operation-queue";
 import { returnErrorToChatGPT, returnResultToChatGPT } from "./result-delivery";
@@ -17,7 +17,7 @@ import {
   renderPanel,
 } from "./result-ui";
 
-const PROCESSED_ATTRIBUTE = "data-kavrith-action";
+const PROCESSED_ATTRIBUTE = "data-repobridge-action";
 
 type InspectionActionDependencies = {
   currentTaskRoot: () => Promise<string>;
@@ -25,12 +25,12 @@ type InspectionActionDependencies = {
 };
 
 function chatSession(): { sessionId: string } {
-  return { sessionId: kavrithSessionId() };
+  return { sessionId: repobridgeSessionId() };
 }
 
 export function addSearchAction(
   code: HTMLElement,
-  request: KavrithSearchRequest,
+  request: RepoBridgeSearchRequest,
   identity: string,
   dependencies: InspectionActionDependencies,
 ): void {
@@ -49,8 +49,8 @@ export function addSearchAction(
     const rootPath = await dependencies.currentTaskRoot();
     renderPanel(panel, "Searching repository", rootPath, query);
     try {
-      const response = await sendKavrithMessage({
-        type: "KAVRITH_SEARCH",
+      const response = await sendRepoBridgeMessage({
+        type: "REPOBRIDGE_SEARCH",
         ...chatSession(),
         query,
       });
@@ -66,7 +66,7 @@ export function addSearchAction(
       await returnResultToChatGPT(
         controls,
         identity,
-        formatKavrithResult(rootPath, query, searchResponse),
+        formatRepoBridgeResult(rootPath, query, searchResponse),
       );
       await setDirectiveState(identity, "completed");
     } catch (cause) {
@@ -110,8 +110,8 @@ export function addReadAction(
       `${path}:${startLine}-${endLine}`,
     );
     try {
-      const response = await sendKavrithMessage({
-        type: "KAVRITH_READ",
+      const response = await sendRepoBridgeMessage({
+        type: "REPOBRIDGE_READ",
         ...chatSession(),
         path,
         startLine,
@@ -129,7 +129,7 @@ export function addReadAction(
       await returnResultToChatGPT(
         controls,
         identity,
-        formatKavrithReadResult(rootPath, readResponse),
+        formatRepoBridgeReadResult(rootPath, readResponse),
       );
       await setDirectiveState(identity, "completed");
     } catch (cause) {
@@ -148,7 +148,7 @@ export function addReadAction(
 
 export function addContextAction(
   code: HTMLElement,
-  request: KavrithContextRequest,
+  request: RepoBridgeContextRequest,
   identity: string,
   dependencies: InspectionActionDependencies,
 ): void {
@@ -180,8 +180,8 @@ export function addContextAction(
     );
 
     try {
-      const response = await sendKavrithMessage({
-        type: "KAVRITH_CONTEXT",
+      const response = await sendRepoBridgeMessage({
+        type: "REPOBRIDGE_CONTEXT",
         ...chatSession(),
         searches: request.searches,
         reads: request.reads,
@@ -245,7 +245,7 @@ export function addContextAction(
         .join("\n\n");
 
       const text = [
-        "<kavrith_context>",
+        "<repobridge_context>",
         `root: ${rootPath}`,
         "operation: inspection.context",
         `sections: ${context.result.sections.length}`,
@@ -254,7 +254,7 @@ export function addContextAction(
         `truncated: ${context.result.truncated}`,
         "",
         sections,
-        "</kavrith_context>",
+        "</repobridge_context>",
       ].join("\n");
 
       await returnResultToChatGPT(controls, identity, text);
@@ -299,8 +299,8 @@ export function addGitAction(
 
     try {
       if (type === "status") {
-        const response = await sendKavrithMessage({
-          type: "KAVRITH_GIT_STATUS",
+        const response = await sendRepoBridgeMessage({
+          type: "REPOBRIDGE_GIT_STATUS",
           ...chatSession(),
         });
         if (!response.ok) {
@@ -308,7 +308,7 @@ export function addGitAction(
         }
 
         const result = response.result;
-        const text = `<kavrith_result>\nroot: ${rootPath}\noperation: git.status\nbranch: ${result.branch}\nclean: ${result.clean}\ntruncated: ${result.truncated}\n\nentries:\n${result.entries.join("\n") || "(clean)"}\n</kavrith_result>`;
+        const text = `<repobridge_result>\nroot: ${rootPath}\noperation: git.status\nbranch: ${result.branch}\nclean: ${result.clean}\ntruncated: ${result.truncated}\n\nentries:\n${result.entries.join("\n") || "(clean)"}\n</repobridge_result>`;
         collapsePanel(
           panel,
           result.clean ? "Working tree clean" : "Git status complete",
@@ -316,8 +316,8 @@ export function addGitAction(
         );
         await returnResultToChatGPT(controls, identity, text);
       } else {
-        const response = await sendKavrithMessage({
-          type: "KAVRITH_GIT_DIFF",
+        const response = await sendRepoBridgeMessage({
+          type: "REPOBRIDGE_GIT_DIFF",
           ...chatSession(),
           staged,
         });
@@ -326,7 +326,7 @@ export function addGitAction(
         }
 
         const result = response.result;
-        const text = `<kavrith_result>\nroot: ${rootPath}\noperation: git.diff\nstaged: ${result.staged}\ntruncated: ${result.truncated}\n\ndiff:\n${result.diff || "(no diff)"}\n</kavrith_result>`;
+        const text = `<repobridge_result>\nroot: ${rootPath}\noperation: git.diff\nstaged: ${result.staged}\ntruncated: ${result.truncated}\n\ndiff:\n${result.diff || "(no diff)"}\n</repobridge_result>`;
         collapsePanel(
           panel,
           result.staged ? "Staged diff complete" : "Diff complete",

@@ -9,8 +9,7 @@ export default defineConfig({
     permissions: ["nativeMessaging", "storage"],
     browser_specific_settings: {
       gecko: {
-        // Retained for compatibility with existing native-host registrations.
-        id: "kavrith@localhost",
+        id: "repobridge@localhost",
         data_collection_permissions: {
           required: ["websiteContent"],
         },

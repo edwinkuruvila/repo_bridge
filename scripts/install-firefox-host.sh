@@ -3,8 +3,8 @@ set -eu
 
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 . "$ROOT_DIR/scripts/platform-paths.sh"
-MANIFEST_DIR=$(kavrith_firefox_manifest_dir)
-MANIFEST_PATH="$MANIFEST_DIR/com.kavrith.host.json"
+MANIFEST_DIR=$(repobridge_firefox_manifest_dir)
+MANIFEST_PATH="$MANIFEST_DIR/com.repobridge.host.json"
 
 HOST_PATH=$("$ROOT_DIR/scripts/install-host-files.sh")
 mkdir -p "$MANIFEST_DIR"

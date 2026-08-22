@@ -1,5 +1,5 @@
 import { realpath, stat } from "node:fs/promises";
-import { PROTOCOL_VERSION, type ErrorResponse } from "@kavrith/protocol";
+import { PROTOCOL_VERSION, type ErrorResponse } from "@repobridge/protocol";
 
 export class TaskRootError extends Error {}
 

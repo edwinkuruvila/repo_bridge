@@ -8,7 +8,7 @@ import {
 } from "../dist-test/lib/directive-lifecycle.js";
 
 test("directive occurrence ids distinguish repeated directives", () => {
-  const text = "# kavrith:run\necho ok";
+  const text = "# repobridge:run\necho ok";
   assert.notEqual(
     directiveOccurrenceId(3, 0, "run", text),
     directiveOccurrenceId(4, 0, "run", text),
@@ -21,26 +21,36 @@ test("directive occurrence ids distinguish repeated directives", () => {
 
 test("streamed text keeps one directive occurrence id", () => {
   assert.equal(
-    directiveOccurrenceId(3, 0, "run", "# kavrith:run\necho par"),
-    directiveOccurrenceId(3, 0, "run", "# kavrith:run\necho partial complete"),
+    directiveOccurrenceId(3, 0, "run", "# repobridge:run\necho par"),
+    directiveOccurrenceId(
+      3,
+      0,
+      "run",
+      "# repobridge:run\necho partial complete",
+    ),
   );
 });
 
 test("streamed startup directives keep one occurrence until generation completes", () => {
-  const partial = directiveOccurrenceId(5, 0, "invalid-run", "# kavrith:run");
+  const partial = directiveOccurrenceId(
+    5,
+    0,
+    "invalid-run",
+    "# repobridge:run",
+  );
   const complete = directiveOccurrenceId(
     5,
     0,
     "run",
-    "# kavrith:run\necho complete",
+    "# repobridge:run\necho complete",
   );
   assert.equal(partial, complete);
 });
 
 test("streamed parse-state changes keep one directive occurrence id", () => {
   assert.equal(
-    directiveOccurrenceId(3, 0, "invalid-run", "# kavrith:run"),
-    directiveOccurrenceId(3, 0, "run", "# kavrith:run\necho complete"),
+    directiveOccurrenceId(3, 0, "invalid-run", "# repobridge:run"),
+    directiveOccurrenceId(3, 0, "run", "# repobridge:run\necho complete"),
   );
 });
 

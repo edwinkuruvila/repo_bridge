@@ -1,25 +1,31 @@
 import { browser } from "wxt/browser";
 import {
-  parseKavrithContext,
-  type KavrithContextRequest,
+  parseRepoBridgeContext,
+  type RepoBridgeContextRequest,
 } from "../../lib/chatgpt-context";
 import {
-  parseKavrithExec,
-  type KavrithExecRequest,
+  parseRepoBridgeExec,
+  type RepoBridgeExecRequest,
 } from "../../lib/chatgpt-exec";
-import { parseKavrithGit, type KavrithGitRequest } from "../../lib/chatgpt-git";
 import {
-  parseKavrithPatch,
-  type KavrithPatchRequest,
+  parseRepoBridgeGit,
+  type RepoBridgeGitRequest,
+} from "../../lib/chatgpt-git";
+import {
+  parseRepoBridgePatch,
+  type RepoBridgePatchRequest,
 } from "../../lib/chatgpt-patch";
 import {
-  parseKavrithRead,
-  type KavrithReadRequest,
+  parseRepoBridgeRead,
+  type RepoBridgeReadRequest,
 } from "../../lib/chatgpt-read";
-import { parseKavrithRun, type KavrithRunRequest } from "../../lib/chatgpt-run";
 import {
-  parseKavrithSearch,
-  type KavrithSearchRequest,
+  parseRepoBridgeRun,
+  type RepoBridgeRunRequest,
+} from "../../lib/chatgpt-run";
+import {
+  parseRepoBridgeSearch,
+  type RepoBridgeSearchRequest,
 } from "../../lib/chatgpt-search";
 import {
   directiveOccurrenceId,
@@ -29,48 +35,48 @@ import {
   type DirectiveLifecycleState,
 } from "../../lib/directive-lifecycle";
 import { createAsyncMutationQueue } from "../../lib/async-mutation-queue";
-import { kavrithSessionId } from "../../lib/kavrith-session";
+import { repobridgeSessionId } from "../../lib/repobridge-session";
 
 const DIRECTIVE_LIFECYCLE_STORAGE_KEY = "chatDirectiveLifecycle";
 const mutateLifecycle = createAsyncMutationQueue();
 
 export type ParsedDirective =
-  | { type: "context"; request: KavrithContextRequest }
-  | { type: "exec"; request: KavrithExecRequest }
-  | { type: "run"; request: KavrithRunRequest }
-  | { type: "patch"; request: KavrithPatchRequest }
+  | { type: "context"; request: RepoBridgeContextRequest }
+  | { type: "exec"; request: RepoBridgeExecRequest }
+  | { type: "run"; request: RepoBridgeRunRequest }
+  | { type: "patch"; request: RepoBridgePatchRequest }
   | {
       type: "git-status";
-      request: Extract<KavrithGitRequest, { type: "status" }>;
+      request: Extract<RepoBridgeGitRequest, { type: "status" }>;
     }
   | {
       type: "git-diff";
-      request: Extract<KavrithGitRequest, { type: "diff" }>;
+      request: Extract<RepoBridgeGitRequest, { type: "diff" }>;
     }
-  | { type: "read"; request: KavrithReadRequest }
-  | { type: "search"; request: KavrithSearchRequest };
+  | { type: "read"; request: RepoBridgeReadRequest }
+  | { type: "search"; request: RepoBridgeSearchRequest };
 
 export function parseDirective(text: string): ParsedDirective | undefined {
-  const context = parseKavrithContext(text);
+  const context = parseRepoBridgeContext(text);
   if (context) return { type: "context", request: context };
 
-  const exec = parseKavrithExec(text);
+  const exec = parseRepoBridgeExec(text);
   if (exec) return { type: "exec", request: exec };
 
-  const run = parseKavrithRun(text);
+  const run = parseRepoBridgeRun(text);
   if (run) return { type: "run", request: run };
 
-  const patch = parseKavrithPatch(text);
+  const patch = parseRepoBridgePatch(text);
   if (patch) return { type: "patch", request: patch };
 
-  const git = parseKavrithGit(text);
+  const git = parseRepoBridgeGit(text);
   if (git?.type === "status") return { type: "git-status", request: git };
   if (git?.type === "diff") return { type: "git-diff", request: git };
 
-  const read = parseKavrithRead(text);
+  const read = parseRepoBridgeRead(text);
   if (read) return { type: "read", request: read };
 
-  const search = parseKavrithSearch(text);
+  const search = parseRepoBridgeSearch(text);
   if (search) return { type: "search", request: search };
 
   return undefined;
@@ -122,7 +128,7 @@ async function getLifecycleMap(): Promise<DirectiveLifecycleByChat> {
 export async function getDirectiveState(
   identity: string,
 ): Promise<DirectiveLifecycleState | undefined> {
-  const sessionId = kavrithSessionId();
+  const sessionId = repobridgeSessionId();
   return lifecycleState(await getLifecycleMap(), sessionId, identity);
 }
 
@@ -131,7 +137,7 @@ export async function setDirectiveState(
   state: DirectiveLifecycleState,
 ): Promise<void> {
   await mutateLifecycle(async () => {
-    const sessionId = kavrithSessionId();
+    const sessionId = repobridgeSessionId();
     const byChat = withLifecycleState(
       await getLifecycleMap(),
       sessionId,

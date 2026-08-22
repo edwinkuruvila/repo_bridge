@@ -1,6 +1,6 @@
 export function createPanel(): HTMLDivElement {
   const panel = document.createElement("div");
-  panel.className = "kavrith-result";
+  panel.className = "repobridge-result";
   panel.style.cssText = [
     "margin:8px 0 0",
     "padding:10px 11px",

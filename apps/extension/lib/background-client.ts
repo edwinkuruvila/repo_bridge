@@ -10,57 +10,57 @@ import type {
   InspectionSearchResponse,
   WorkspacePatchResponse,
   WorkspaceUndoResponse,
-} from "@kavrith/protocol";
+} from "@repobridge/protocol";
 import type {
-  KavrithContextMessage,
-  KavrithExecMessage,
-  KavrithGitDiffMessage,
-  KavrithGitStatusMessage,
-  KavrithPatchMessage,
-  KavrithReadMessage,
-  KavrithRunMessage,
-  KavrithSearchMessage,
-  KavrithUndoMessage,
+  RepoBridgeContextMessage,
+  RepoBridgeExecMessage,
+  RepoBridgeGitDiffMessage,
+  RepoBridgeGitStatusMessage,
+  RepoBridgePatchMessage,
+  RepoBridgeReadMessage,
+  RepoBridgeRunMessage,
+  RepoBridgeSearchMessage,
+  RepoBridgeUndoMessage,
 } from "./messages";
 
-export function sendKavrithMessage(
-  message: KavrithSearchMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgeSearchMessage,
 ): Promise<InspectionSearchResponse | ErrorResponse>;
-export function sendKavrithMessage(
-  message: KavrithReadMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgeReadMessage,
 ): Promise<InspectionReadResponse | ErrorResponse>;
-export function sendKavrithMessage(
-  message: KavrithContextMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgeContextMessage,
 ): Promise<InspectionContextResponse | ErrorResponse>;
-export function sendKavrithMessage(
-  message: KavrithPatchMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgePatchMessage,
 ): Promise<WorkspacePatchResponse | ErrorResponse>;
-export function sendKavrithMessage(
-  message: KavrithUndoMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgeUndoMessage,
 ): Promise<WorkspaceUndoResponse | ErrorResponse>;
-export function sendKavrithMessage(
-  message: KavrithGitStatusMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgeGitStatusMessage,
 ): Promise<GitStatusResponse | ErrorResponse>;
-export function sendKavrithMessage(
-  message: KavrithGitDiffMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgeGitDiffMessage,
 ): Promise<GitDiffResponse | ErrorResponse>;
-export function sendKavrithMessage(
-  message: KavrithExecMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgeExecMessage,
 ): Promise<CommandExecResponse | ErrorResponse>;
-export function sendKavrithMessage(
-  message: KavrithRunMessage,
+export function sendRepoBridgeMessage(
+  message: RepoBridgeRunMessage,
 ): Promise<CommandRunResponse | ErrorResponse>;
-export async function sendKavrithMessage(
+export async function sendRepoBridgeMessage(
   message:
-    | KavrithSearchMessage
-    | KavrithReadMessage
-    | KavrithContextMessage
-    | KavrithPatchMessage
-    | KavrithUndoMessage
-    | KavrithGitStatusMessage
-    | KavrithGitDiffMessage
-    | KavrithExecMessage
-    | KavrithRunMessage,
+    | RepoBridgeSearchMessage
+    | RepoBridgeReadMessage
+    | RepoBridgeContextMessage
+    | RepoBridgePatchMessage
+    | RepoBridgeUndoMessage
+    | RepoBridgeGitStatusMessage
+    | RepoBridgeGitDiffMessage
+    | RepoBridgeExecMessage
+    | RepoBridgeRunMessage,
 ): Promise<unknown> {
   return browser.runtime.sendMessage(message);
 }

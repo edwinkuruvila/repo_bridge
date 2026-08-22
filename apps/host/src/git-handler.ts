@@ -2,7 +2,7 @@ import {
   PROTOCOL_VERSION,
   type ErrorResponse,
   type NativeResponse,
-} from "@kavrith/protocol";
+} from "@repobridge/protocol";
 import { runProcess } from "./process-runner.js";
 import { findGit } from "./executable-discovery.js";
 import {

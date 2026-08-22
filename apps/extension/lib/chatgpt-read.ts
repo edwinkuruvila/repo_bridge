@@ -1,4 +1,4 @@
-export interface KavrithReadRequest {
+export interface RepoBridgeReadRequest {
   path: string;
   startLine: number;
   endLine: number;
@@ -8,7 +8,7 @@ function buildReadRequest(
   path: string,
   startText: string,
   endText: string,
-): KavrithReadRequest | undefined {
+): RepoBridgeReadRequest | undefined {
   if (!path || !/^[1-9]\d*$/.test(startText) || !/^[1-9]\d*$/.test(endText)) {
     return undefined;
   }
@@ -20,11 +20,13 @@ function buildReadRequest(
     : undefined;
 }
 
-export function parseKavrithRead(text: string): KavrithReadRequest | undefined {
+export function parseRepoBridgeRead(
+  text: string,
+): RepoBridgeReadRequest | undefined {
   const normalized = text.replace(/\r\n?/g, "\n").trim();
 
   const oneLine = normalized.match(
-    /^# kavrith:read\s+(.+?)\s+([1-9]\d*)\s+([1-9]\d*)$/,
+    /^# repobridge:read\s+(.+?)\s+([1-9]\d*)\s+([1-9]\d*)$/,
   );
   if (oneLine) {
     return buildReadRequest(
@@ -35,7 +37,7 @@ export function parseKavrithRead(text: string): KavrithReadRequest | undefined {
   }
 
   const lines = normalized.split("\n");
-  if (lines.length !== 4 || lines[0] !== "# kavrith:read") return undefined;
+  if (lines.length !== 4 || lines[0] !== "# repobridge:read") return undefined;
 
   return buildReadRequest(
     lines[1]?.trim() ?? "",
