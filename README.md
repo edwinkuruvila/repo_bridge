@@ -77,6 +77,20 @@ Then:
 6. Click **RepoBridge** in the composer.
 7. Choose a repository and an access mode.
 
+The host is installed at:
+
+```text
+macOS: ~/Library/Application Support/Kavrith/host
+Linux: $XDG_DATA_HOME/kavrith/host (default: ~/.local/share/kavrith/host)
+```
+
+Firefox reads its Native Messaging manifest from:
+
+```text
+macOS: ~/Library/Application Support/Mozilla/NativeMessagingHosts/com.kavrith.host.json
+Linux: ~/.mozilla/native-messaging-hosts/com.kavrith.host.json
+```
+
 ## Chrome
 
 Build the extension:
@@ -102,6 +116,15 @@ Then:
 8. Open ChatGPT.
 9. Click **RepoBridge** in the composer.
 10. Choose a repository and an access mode.
+
+Chrome reads its Native Messaging manifest from:
+
+```text
+macOS: ~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.kavrith.host.json
+Linux: $XDG_CONFIG_HOME/google-chrome/NativeMessagingHosts/com.kavrith.host.json (default: ~/.config/google-chrome/NativeMessagingHosts/com.kavrith.host.json)
+```
+
+The installer restricts the host to the supplied extension ID through `allowed_origins`.
 
 ## How it works
 
@@ -129,9 +152,8 @@ The extension detects RepoBridge directives in assistant responses and forwards 
 
 RepoBridge directives are executable protocol messages. ChatGPT generates them as it works on the repository selected for the conversation.
 
-## Compatibility note
-
-Some internal package names, native-host identifiers, storage keys, and installation paths still use the previous `kavrith` identifier. They are intentionally retained for compatibility and are not the public project name.
+> [!NOTE]
+> Some internal identifiers and installation paths still use the legacy `kavrith` identifier for compatibility with existing installations.
 
 ## Troubleshooting
 
