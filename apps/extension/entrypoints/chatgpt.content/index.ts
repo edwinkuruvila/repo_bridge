@@ -1,12 +1,16 @@
-import { syncRepoBridgeSessionForCurrentPage } from "../../lib/repobridge-session";
+import {
+  ASSISTANT_MESSAGE_SELECTOR,
+  CODE_BLOCK_SELECTOR,
+} from "../../lib/chatgpt-assistant-dom";
 import { deferredPrimeDecision } from "../../lib/directive-stability";
-import { ensureChatInitializer } from "./initializer";
+import { syncRepoBridgeSessionForCurrentPage } from "../../lib/repobridge-session";
 import {
   assistantMessageForNode,
   inspect,
   primeExistingDirectives,
   restoreQueuedResults,
 } from "./directive-processing";
+import { ensureChatInitializer } from "./initializer";
 
 export default defineContentScript({
   matches: ["https://chatgpt.com/*"],
@@ -87,24 +91,24 @@ export default defineContentScript({
       for (const record of records) {
         if (record.type === "characterData") {
           const message = assistantMessageForNode(record.target);
-          if (message?.querySelector("pre")) {
+          if (message?.querySelector(CODE_BLOCK_SELECTOR)) {
             changedAssistantMessages.add(message);
           }
         }
 
         for (const node of record.addedNodes) {
-          const message = assistantMessageForNode(node);
-          if (!message) continue;
-
-          const containsCode =
-            node instanceof HTMLElement
-              ? node.matches("pre") ||
-                node.querySelector("pre") !== null ||
-                message.querySelector("pre") !== null
-              : message.querySelector("pre") !== null;
-
-          if (containsCode) {
-            changedAssistantMessages.add(message);
+          const enclosing = assistantMessageForNode(node);
+          if (enclosing?.querySelector(CODE_BLOCK_SELECTOR)) {
+            changedAssistantMessages.add(enclosing);
+          }
+          if (node instanceof HTMLElement) {
+            for (const message of node.querySelectorAll<HTMLElement>(
+              ASSISTANT_MESSAGE_SELECTOR,
+            )) {
+              if (message.querySelector(CODE_BLOCK_SELECTOR)) {
+                changedAssistantMessages.add(message);
+              }
+            }
           }
         }
       }

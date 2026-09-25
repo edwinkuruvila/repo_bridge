@@ -1,10 +1,11 @@
+import { sendRepoBridgeMessage } from "../../lib/background-client";
+import { CODE_BLOCK_SELECTOR } from "../../lib/chatgpt-assistant-dom";
 import type { RepoBridgeContextRequest } from "../../lib/chatgpt-context";
 import type { RepoBridgeSearchRequest } from "../../lib/chatgpt-search";
 import {
   formatRepoBridgeReadResult,
   formatRepoBridgeResult,
 } from "../../lib/repobridge-result";
-import { sendRepoBridgeMessage } from "../../lib/background-client";
 import { repobridgeSessionId } from "../../lib/repobridge-session";
 import { setDirectiveState } from "./directive-scanner";
 import { enqueueAutomaticOperation } from "./operation-queue";
@@ -35,7 +36,7 @@ export function addSearchAction(
   dependencies: InspectionActionDependencies,
 ): void {
   const { query } = request;
-  const pre = code.closest("pre");
+  const pre = code.closest(CODE_BLOCK_SELECTOR);
   if (!pre || pre.hasAttribute(PROCESSED_ATTRIBUTE)) return;
   pre.setAttribute(PROCESSED_ATTRIBUTE, "true");
 
@@ -91,7 +92,7 @@ export function addReadAction(
   identity: string,
   dependencies: InspectionActionDependencies,
 ): void {
-  const pre = code.closest("pre");
+  const pre = code.closest(CODE_BLOCK_SELECTOR);
   if (!pre || pre.hasAttribute(PROCESSED_ATTRIBUTE)) return;
   pre.setAttribute(PROCESSED_ATTRIBUTE, "true");
 
@@ -152,7 +153,7 @@ export function addContextAction(
   identity: string,
   dependencies: InspectionActionDependencies,
 ): void {
-  const pre = code.closest("pre");
+  const pre = code.closest(CODE_BLOCK_SELECTOR);
   if (!pre || pre.hasAttribute(PROCESSED_ATTRIBUTE)) return;
   pre.setAttribute(PROCESSED_ATTRIBUTE, "true");
 
@@ -280,7 +281,7 @@ export function addGitAction(
   staged = false,
   dependencies: InspectionActionDependencies,
 ): void {
-  const pre = code.closest("pre");
+  const pre = code.closest(CODE_BLOCK_SELECTOR);
   if (!pre || pre.hasAttribute(PROCESSED_ATTRIBUTE)) return;
   pre.setAttribute(PROCESSED_ATTRIBUTE, "true");
   const controls = createControls();

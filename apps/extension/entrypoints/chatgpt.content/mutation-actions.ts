@@ -1,12 +1,14 @@
 import { sendRepoBridgeMessage } from "../../lib/background-client";
+import { CODE_BLOCK_SELECTOR } from "../../lib/chatgpt-assistant-dom";
 import type { RepoBridgeExecRequest } from "../../lib/chatgpt-exec";
-import { classifyExecRisk } from "../../lib/exec-policy";
 import {
   patchPreview,
   type RepoBridgePatchRequest,
 } from "../../lib/chatgpt-patch";
 import type { RepoBridgeRunRequest } from "../../lib/chatgpt-run";
+import { classifyExecRisk } from "../../lib/exec-policy";
 import { repobridgeSessionId } from "../../lib/repobridge-session";
+import { isTrustedUserGesture } from "../../lib/user-gesture";
 import { approvalIsClaimed, setupApprovalAction } from "./approval-action";
 import { setDirectiveState } from "./directive-scanner";
 import { returnErrorToChatGPT, returnResultToChatGPT } from "./result-delivery";
@@ -16,7 +18,6 @@ import {
   errorMessage,
   renderPanel,
 } from "./result-ui";
-import { isTrustedUserGesture } from "../../lib/user-gesture";
 
 const PROCESSED_ATTRIBUTE = "data-repobridge-action";
 
@@ -37,7 +38,7 @@ export function addPatchAction(
   dependencies: MutationActionDependencies,
 ): void {
   const { patch } = request;
-  const pre = code.closest("pre");
+  const pre = code.closest<HTMLElement>(CODE_BLOCK_SELECTOR);
   if (!pre || pre.hasAttribute(PROCESSED_ATTRIBUTE)) return;
   if (approvalIsClaimed(identity)) return;
   pre.setAttribute(PROCESSED_ATTRIBUTE, "true");
@@ -149,7 +150,7 @@ export function addRunAction(
   dependencies: MutationActionDependencies,
 ): void {
   const { command } = request;
-  const pre = code.closest("pre");
+  const pre = code.closest<HTMLElement>(CODE_BLOCK_SELECTOR);
   if (!pre || pre.hasAttribute(PROCESSED_ATTRIBUTE)) return;
   if (approvalIsClaimed(identity)) return;
   pre.setAttribute(PROCESSED_ATTRIBUTE, "true");
@@ -224,7 +225,7 @@ export function addExecAction(
   forceApproval = false,
   dependencies: MutationActionDependencies,
 ): void {
-  const pre = code.closest("pre");
+  const pre = code.closest<HTMLElement>(CODE_BLOCK_SELECTOR);
   if (!pre || pre.hasAttribute(PROCESSED_ATTRIBUTE)) return;
   if (approvalIsClaimed(identity)) return;
   pre.setAttribute(PROCESSED_ATTRIBUTE, "true");

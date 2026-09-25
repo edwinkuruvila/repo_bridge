@@ -27,10 +27,10 @@ export default defineContentScript({
         typeof event.detail === "string" ? event.detail : undefined;
       if (!requestId) return;
 
-      const pre = document.querySelector<HTMLElement>(
-        `pre[${BLOCK_ID_ATTRIBUTE}="${CSS.escape(requestId)}"]`,
+      const block = document.querySelector<HTMLElement>(
+        `[${BLOCK_ID_ATTRIBUTE}="${CSS.escape(requestId)}"]`,
       );
-      const content = pre?.querySelector<CodeMirrorContent>(
+      const content = block?.querySelector<CodeMirrorContent>(
         READONLY_TEXTBOX_SELECTOR,
       );
       const text = content?.cmTile?.view?.state?.doc?.toString();
