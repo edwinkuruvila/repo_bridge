@@ -1,4 +1,11 @@
 import { browser } from "wxt/browser";
+import { createAsyncMutationQueue } from "../../lib/async-mutation-queue";
+import {
+  ASSISTANT_MESSAGE_SELECTOR,
+  assistantCodeBlocks,
+  assistantMessageForNode,
+  CODE_BLOCK_SELECTOR,
+} from "../../lib/chatgpt-assistant-dom";
 import {
   parseRepoBridgeContext,
   type RepoBridgeContextRequest,
@@ -28,13 +35,12 @@ import {
   type RepoBridgeSearchRequest,
 } from "../../lib/chatgpt-search";
 import {
+  type DirectiveLifecycleByChat,
+  type DirectiveLifecycleState,
   directiveOccurrenceId,
   lifecycleState,
   withLifecycleState,
-  type DirectiveLifecycleByChat,
-  type DirectiveLifecycleState,
 } from "../../lib/directive-lifecycle";
-import { createAsyncMutationQueue } from "../../lib/async-mutation-queue";
 import { repobridgeSessionId } from "../../lib/repobridge-session";
 
 const DIRECTIVE_LIFECYCLE_STORAGE_KEY = "chatDirectiveLifecycle";
@@ -87,25 +93,25 @@ export function directiveId(
   type: string,
   text = code.textContent ?? "",
 ): string | undefined {
-  const message = code.closest<HTMLElement>(
-    "[data-message-author-role='assistant']",
-  );
+  const message = assistantMessageForNode(code);
   if (!message) return undefined;
   const turn = message.closest<HTMLElement>(
-    "[data-message-id], [data-testid^='conversation-turn-']",
+    "[data-message-id], [data-testid^='conversation-turn-'], [data-turn-key]",
   );
-  const stableTurnIdentity = turn?.dataset.messageId ?? turn?.dataset.testid;
+  const stableTurnIdentity =
+    message.querySelector<HTMLElement>("[data-chatgpt-selection-message-id]")
+      ?.dataset.chatgptSelectionMessageId ??
+    turn?.dataset.messageId ??
+    turn?.dataset.testid ??
+    turn?.dataset.turnKey;
   const assistantTurns = [
-    ...document.querySelectorAll<HTMLElement>(
-      "[data-message-author-role='assistant']",
-    ),
+    ...document.querySelectorAll<HTMLElement>(ASSISTANT_MESSAGE_SELECTOR),
   ];
   const assistantTurnIndex = assistantTurns.indexOf(message);
   if (assistantTurnIndex < 0) return undefined;
-  const pre = code.closest("pre");
-  if (!pre) return undefined;
-  const codes = [...message.querySelectorAll<HTMLElement>("pre")];
-  const codeIndex = codes.indexOf(pre);
+  const block = code.closest<HTMLElement>(CODE_BLOCK_SELECTOR);
+  if (!block) return undefined;
+  const codeIndex = assistantCodeBlocks(message).indexOf(block);
   if (codeIndex < 0) return undefined;
   return directiveOccurrenceId(
     stableTurnIdentity ?? assistantTurnIndex,

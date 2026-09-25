@@ -1,17 +1,18 @@
 import { browser } from "wxt/browser";
 import {
+  type ChatInitialization,
   getChatInitialization,
   popupDefaults,
   setChatInitialization,
-  type ChatInitialization,
 } from "../../lib/chat-initialization";
+import { composerContainer, findComposer } from "../../lib/composer-discovery";
+import { isDraftChatUrl } from "../../lib/conversation-session";
 import {
   repobridgeSessionId,
   syncRepoBridgeSessionForCurrentPage,
 } from "../../lib/repobridge-session";
-import { sendToChatGPT } from "./composer";
 import { isTrustedUserGesture } from "../../lib/user-gesture";
-import { composerContainer, findComposer } from "../../lib/composer-discovery";
+import { sendToChatGPT } from "./composer";
 
 const INITIALIZER_ID = "repobridge-chat-initializer";
 
@@ -157,6 +158,8 @@ function createInitializer(sessionId: string): HTMLDivElement {
   approvalLabel.style.cssText = "display:block;margin:4px 0;";
   const approval = document.createElement("input");
   approval.type = "radio";
+  approval.style.cssText =
+    "appearance:auto;width:14px;height:14px;vertical-align:middle;accent-color:#18181b;";
   approval.name = `repobridge-chat-access-${sessionId}`;
   approval.value = "approval";
   approvalLabel.append(approval, " Ask before changes");
@@ -167,6 +170,8 @@ function createInitializer(sessionId: string): HTMLDivElement {
   fullLabel.style.cssText = "display:block;margin:4px 0 11px;";
   const full = document.createElement("input");
   full.type = "radio";
+  full.style.cssText =
+    "appearance:auto;width:14px;height:14px;vertical-align:middle;accent-color:#18181b;";
   full.name = `repobridge-chat-access-${sessionId}`;
   full.value = "full";
   fullLabel.append(full, " Full access");
@@ -197,6 +202,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
   let savedAccessMode: ChatInitialization["accessMode"] | undefined;
   let selectedAccessMode: ChatInitialization["accessMode"] = "approval";
   let initialized = false;
+  let bootstrapSentInThisView = false;
 
   const repositoryName = (path: string): string => {
     const normalized = path.replace(/[\\/]+$/, "");
@@ -224,7 +230,9 @@ function createInitializer(sessionId: string): HTMLDivElement {
       ]);
 
       if (initialization) {
-        initialized = true;
+        initialized =
+          Boolean(initialization.bootstrappedAt) &&
+          (!isDraftChatUrl(location.href) || bootstrapSentInThisView);
         badge.title = "RepoBridge active";
         approval.checked = initialization.accessMode === "approval";
         full.checked = initialization.accessMode === "full";
@@ -346,7 +354,8 @@ function createInitializer(sessionId: string): HTMLDivElement {
         rootPath,
         accessMode,
         initializedAt: previous?.initializedAt ?? new Date().toISOString(),
-        ...(previous?.bootstrappedAt
+        ...(previous?.bootstrappedAt &&
+        (!isDraftChatUrl(location.href) || bootstrapSentInThisView)
           ? { bootstrappedAt: previous.bootstrappedAt }
           : {}),
       };
@@ -360,6 +369,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
         }
         initialization.bootstrappedAt = new Date().toISOString();
         await setChatInitialization(initialization);
+        bootstrapSentInThisView = true;
       } else {
         await setChatInitialization(initialization);
       }
@@ -370,6 +380,7 @@ function createInitializer(sessionId: string): HTMLDivElement {
       status.textContent =
         cause instanceof Error ? cause.message : String(cause);
       action.disabled = false;
+      updateAction();
     }
   });
 

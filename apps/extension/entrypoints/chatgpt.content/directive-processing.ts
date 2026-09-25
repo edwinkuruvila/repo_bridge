@@ -1,29 +1,9 @@
 import { getChatInitialization } from "../../lib/chat-initialization";
-import { repobridgeSessionId } from "../../lib/repobridge-session";
-import { createControls } from "./result-ui";
 import {
-  directiveId,
-  getDirectiveState,
-  parseDirective,
-  setDirectiveState,
-} from "./directive-scanner";
-import {
-  addComposerAction,
-  getOutbox,
-  returnResultToChatGPT,
-} from "./result-delivery";
-import {
-  addExecAction,
-  addPatchAction,
-  addRunAction,
-} from "./mutation-actions";
-import {
-  addContextAction,
-  addGitAction,
-  addReadAction,
-  addSearchAction,
-} from "./inspection-actions";
-import { pendingResult } from "../../lib/result-outbox";
+  assistantCodeBlocks,
+  assistantMessageForNode,
+  CODE_BLOCK_SELECTOR,
+} from "../../lib/chatgpt-assistant-dom";
 import {
   directiveCodeContent,
   directiveCodeText,
@@ -31,10 +11,34 @@ import {
   preferredDirectiveCodeText,
 } from "../../lib/chatgpt-code-block";
 import { repobridgeDirectiveParseError } from "../../lib/chatgpt-directive-error";
+import { repobridgeSessionId } from "../../lib/repobridge-session";
+import { pendingResult } from "../../lib/result-outbox";
+import {
+  directiveId,
+  getDirectiveState,
+  parseDirective,
+  setDirectiveState,
+} from "./directive-scanner";
+import {
+  addContextAction,
+  addGitAction,
+  addReadAction,
+  addSearchAction,
+} from "./inspection-actions";
+import {
+  addExecAction,
+  addPatchAction,
+  addRunAction,
+} from "./mutation-actions";
+import {
+  addComposerAction,
+  getOutbox,
+  returnResultToChatGPT,
+} from "./result-delivery";
+import { createControls } from "./result-ui";
 
 const PROCESSED_ATTRIBUTE = "data-repobridge-action";
 const CLAIMING_ATTRIBUTE = "data-repobridge-claiming";
-const ASSISTANT_CODE_SELECTOR = "[data-message-author-role='assistant'] pre";
 const CODE_TEXT_REQUEST_EVENT = "repobridge:code-text-request";
 const CODE_TEXT_RESPONSE_EVENT = "repobridge:code-text-response";
 const CODE_READER_ID_ATTRIBUTE = "data-repobridge-code-reader-id";
@@ -73,14 +77,7 @@ function fullDirectiveCodeText(pre: HTMLElement): string | undefined {
   return preferredDirectiveCodeText(fullText, fallback);
 }
 
-export function assistantMessageForNode(node: Node): HTMLElement | undefined {
-  const element = node instanceof HTMLElement ? node : node.parentElement;
-
-  return (
-    element?.closest<HTMLElement>("[data-message-author-role='assistant']") ??
-    undefined
-  );
-}
+export { assistantMessageForNode };
 
 function registerAction(code: HTMLElement, ...elements: HTMLElement[]): void {
   for (const element of renderedActions.get(code) ?? []) element.remove();
@@ -183,7 +180,7 @@ export async function restoreQueuedResults(): Promise<void> {
   const entries = Object.values(outbox[sessionId] ?? {});
   if (entries.length === 0) return;
 
-  const codes = document.querySelectorAll<HTMLElement>(ASSISTANT_CODE_SELECTOR);
+  const codes = assistantCodeBlocks(document);
   for (const pre of codes) {
     const code = directiveCodeContent(pre) as HTMLElement | undefined;
     const text = fullDirectiveCodeText(pre);
@@ -215,14 +212,11 @@ export async function restoreQueuedResults(): Promise<void> {
 export function inspect(root: ParentNode): void {
   if (
     root instanceof HTMLElement &&
-    !root.matches("pre") &&
-    !root.querySelector("pre")
+    !root.matches(CODE_BLOCK_SELECTOR) &&
+    !root.querySelector(CODE_BLOCK_SELECTOR)
   )
     return;
-  const codes: HTMLElement[] = [];
-  if (root instanceof HTMLElement && root.matches(ASSISTANT_CODE_SELECTOR))
-    codes.push(root);
-  codes.push(...root.querySelectorAll<HTMLElement>(ASSISTANT_CODE_SELECTOR));
+  const codes = assistantCodeBlocks(root);
   for (const pre of codes) {
     if (!isUnprocessedCodeBlock(pre, PROCESSED_ATTRIBUTE, CLAIMING_ATTRIBUTE))
       continue;
@@ -305,7 +299,7 @@ export function inspect(root: ParentNode): void {
 }
 
 export function primeExistingDirectives(): void {
-  const codes = document.querySelectorAll<HTMLElement>(ASSISTANT_CODE_SELECTOR);
+  const codes = assistantCodeBlocks(document);
   for (const pre of codes) {
     if (!isUnprocessedCodeBlock(pre, PROCESSED_ATTRIBUTE, CLAIMING_ATTRIBUTE))
       continue;

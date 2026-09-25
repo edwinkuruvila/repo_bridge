@@ -2,14 +2,15 @@ export function createPanel(): HTMLDivElement {
   const panel = document.createElement("div");
   panel.className = "repobridge-result";
   panel.style.cssText = [
-    "margin:8px 0 0",
-    "padding:10px 11px",
-    "border:1px solid color-mix(in srgb, CanvasText 16%, transparent)",
-    "border-radius:8px",
-    "background:color-mix(in srgb, CanvasText 3%, Canvas)",
-    "color:CanvasText",
+    "margin:0",
+    "padding:10px 20px",
+    "border-top:1px solid color-mix(in srgb, currentColor 12%, transparent)",
+    "background:transparent",
+    "color:inherit",
     "overflow-wrap:anywhere",
-    'font:13px/1.45 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+    "font-family:inherit",
+    "font-size:14px",
+    "line-height:1.45",
   ].join(";");
   return panel;
 }
@@ -83,7 +84,7 @@ export function collapsePanel(
   detail?: string,
 ): void {
   panel.replaceChildren();
-  panel.style.padding = "7px 9px";
+  panel.style.padding = "10px 20px";
 
   const row = document.createElement("div");
   row.style.cssText =

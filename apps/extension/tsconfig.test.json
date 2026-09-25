@@ -25,6 +25,7 @@
     "lib/chatgpt-run.ts",
     "lib/chatgpt-patch.ts",
     "lib/chatgpt-code-block.ts",
+    "lib/chatgpt-assistant-dom.ts",
     "lib/chatgpt-directive-error.ts",
     "lib/composer-delivery.ts",
     "lib/composer-discovery.ts",
