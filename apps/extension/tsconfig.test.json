@@ -27,6 +27,7 @@
     "lib/chatgpt-code-block.ts",
     "lib/chatgpt-directive-error.ts",
     "lib/composer-delivery.ts",
+    "lib/composer-discovery.ts",
     "lib/exec-policy.ts",
     "lib/result-outbox.ts",
     "lib/user-gesture.ts"
