@@ -2,24 +2,10 @@ import {
   composerRollbackDecision,
   firstUsableCandidate,
 } from "../../lib/composer-delivery";
-
-const COMPOSER_SELECTORS = [
-  "#prompt-textarea[contenteditable='true']",
-  "textarea#prompt-textarea",
-  "textarea[data-testid='prompt-textarea']",
-] as const;
+import { findComposer } from "../../lib/composer-discovery";
 
 type Composer = HTMLElement | HTMLTextAreaElement;
 const SEND_READY_TIMEOUT_MS = 15_000;
-
-function findComposer(): Composer | undefined {
-  for (const selector of COMPOSER_SELECTORS) {
-    const element = document.querySelector<HTMLElement>(selector);
-    if (element instanceof HTMLTextAreaElement || element?.isContentEditable)
-      return element;
-  }
-  return undefined;
-}
 
 function composerText(composer: Composer): string {
   return composer instanceof HTMLTextAreaElement

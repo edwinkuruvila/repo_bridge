@@ -11,6 +11,7 @@ import {
 } from "../../lib/repobridge-session";
 import { sendToChatGPT } from "./composer";
 import { isTrustedUserGesture } from "../../lib/user-gesture";
+import { composerContainer, findComposer } from "../../lib/composer-discovery";
 
 const INITIALIZER_ID = "repobridge-chat-initializer";
 
@@ -405,8 +406,7 @@ function renderChatInitializer(): void {
   existing?.remove();
   activePlacement = undefined;
 
-  const composer = document.querySelector("#prompt-textarea");
-  if (!composer) return;
+  if (!findComposer()) return;
 
   const initializer = createInitializer(sessionId);
   document.body.append(initializer);
@@ -418,13 +418,8 @@ function renderChatInitializer(): void {
   const observer = new ResizeObserver(() => place());
 
   const currentContainer = (): Element | undefined => {
-    const currentComposer = document.querySelector("#prompt-textarea");
-    return (
-      currentComposer?.closest("form") ??
-      currentComposer?.parentElement?.parentElement ??
-      currentComposer?.parentElement ??
-      undefined
-    );
+    const currentComposer = findComposer();
+    return currentComposer ? composerContainer(currentComposer) : undefined;
   };
 
   const place = (): void => {
